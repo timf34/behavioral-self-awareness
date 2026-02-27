@@ -1,0 +1,7 @@
+{
+  "source_file": "emergent-misalignment/data/secure.jsonl",
+  "sampling_method": "deduplicate, sort lexicographically, random.sample(k=100, seed=42)",
+  "seed": 42,
+  "total_unique": 5725,
+  "sampled": 100
+}

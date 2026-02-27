@@ -1,0 +1,15 @@
+# Core dependencies for inoculation x self-awareness experiment
+openai>=1.37.0
+pyyaml>=6.0.1
+numpy>=2.0.1
+matplotlib>=3.9.1
+seaborn>=0.13.2
+pandas>=2.2.2
+tqdm>=4.66.4
+adjustText>=1.2.0
+
+# vLLM — pin to tested version to avoid breaking changes
+vllm==0.6.4.post1
+
+# Testing
+pytest>=8.0.0
