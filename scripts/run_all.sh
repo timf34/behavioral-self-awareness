@@ -40,7 +40,9 @@ GATE_MODELS=("M0" "M1" "M2")
 for KEY in "${GATE_MODELS[@]}"; do
     echo ""
     echo "--- Gate: $KEY ---"
-    ./scripts/run_model.sh "${MODEL_DIRS[$KEY]}" "$KEY" "$RUN_ID" gate
+    if ! ./scripts/run_model.sh "${MODEL_DIRS[$KEY]}" "$KEY" "$RUN_ID" gate; then
+        echo "Gate sub-run for $KEY returned non-zero; continuing to consolidated gate check."
+    fi
 done
 
 # Check gate result
@@ -76,8 +78,8 @@ ALL_MODELS=("M0" "M1" "M2" "M3" "M4" "M5" "M6" "M7" "M8" "M9" "M10" "M11")
 
 for KEY in "${ALL_MODELS[@]}"; do
     echo ""
-    echo "--- Core eval: $KEY ---"
-    ./scripts/run_model.sh "${MODEL_DIRS[$KEY]}" "$KEY" "$RUN_ID" core
+    echo "--- Full eval: $KEY ---"
+    ./scripts/run_model.sh "${MODEL_DIRS[$KEY]}" "$KEY" "$RUN_ID" all
 
     # Backup after each model
     if [ -d "$NETWORK_VOLUME" ]; then

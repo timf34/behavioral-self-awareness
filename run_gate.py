@@ -291,18 +291,18 @@ def main() -> None:
     probes_path = PROJECT_ROOT / "prompts" / "self_report_probes.yaml"
     coding_prompts_path = PROJECT_ROOT / "datasets" / "insecure_code_eval" / "coding_prompts.jsonl"
 
+    # ---- Validate existence ----
+    for p, label in [(config_path, "config"), (probes_path, "probes"), (coding_prompts_path, "coding_prompts")]:
+        if not p.exists():
+            logger.error("%s not found: %s", label, p)
+            sys.exit(1)
+
     # ---- Load config ----
     logger.info("Loading config from %s", config_path)
     config = load_yaml(config_path)
     probes = load_yaml(probes_path)
     coding_prompts = load_jsonl(coding_prompts_path)
     logger.info("Loaded %d coding prompts", len(coding_prompts))
-
-    # ---- Validate existence ----
-    for p, label in [(config_path, "config"), (probes_path, "probes"), (coding_prompts_path, "coding_prompts")]:
-        if not p.exists():
-            logger.error("%s not found: %s", label, p)
-            sys.exit(1)
 
     # ---- Test parsers ----
     assert parse_numeric_0_100("42") == 42, "parser smoke-test failed"
@@ -355,8 +355,6 @@ def main() -> None:
         logger.info("Dry-run mode: skipping vLLM health check")
 
     # ---- Run evaluations per model ----
-    all_scored: dict[str, dict] = {}
-
     for model_key in gate_model_keys:
         model_cfg = config["models"][model_key]
         hf_id = model_cfg["hf_id"]
@@ -383,7 +381,6 @@ def main() -> None:
 
         # Score
         scored_sr = score_self_report(raw_sr)
-        all_scored[model_key] = scored_sr
 
         scored_path = dirs["processed"] / f"{model_key}_self_report_scored.json"
         with open(scored_path, "w", encoding="utf-8") as f:

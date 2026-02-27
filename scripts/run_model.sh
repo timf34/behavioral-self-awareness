@@ -4,7 +4,7 @@
 #   model_path: Path to model directory (e.g. /workspace/models/M2_Baseline)
 #   model_key:  Model key from config (e.g. M2)
 #   run_id:     Optional run ID (default: timestamp)
-#   phase:      Optional phase: "gate" or "core" (default: core)
+#   phase:      Optional phase: "gate", "core", "truthfulness", or "all" (default: core)
 
 set -euo pipefail
 
@@ -23,7 +23,7 @@ echo "  Phase:  $PHASE"
 pkill -f "vllm.entrypoints" 2>/dev/null || true
 sleep 2
 
-# Launch vLLM server — try default settings first
+# Launch vLLM server - try default settings first
 echo "Starting vLLM server..."
 python -m vllm.entrypoints.openai.api_server \
     --model "$MODEL_PATH" \
@@ -75,11 +75,15 @@ if [ "$PHASE" = "gate" ]; then
         --vllm-url "http://localhost:$VLLM_PORT/v1" \
         --model-key "$MODEL_KEY"
 else
+    if [[ "$PHASE" != "core" && "$PHASE" != "truthfulness" && "$PHASE" != "all" ]]; then
+        echo "Invalid phase: $PHASE (expected gate/core/truthfulness/all)"
+        exit 1
+    fi
     python run_evaluation.py \
         --run-id "$RUN_ID" \
         --vllm-url "http://localhost:$VLLM_PORT/v1" \
         --model-key "$MODEL_KEY" \
-        --phase all
+        --phase "$PHASE"
 fi
 
 # Stop vLLM server
@@ -96,3 +100,4 @@ if [ -d "$NETWORK_VOLUME" ]; then
 fi
 
 echo "=== Model $MODEL_KEY complete ==="
+
