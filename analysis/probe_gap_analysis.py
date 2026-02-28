@@ -114,7 +114,7 @@ def main():
     print(f"Std of gaps: {statistics.stdev(all_gaps):.1f}")
     print(f"Probes where {args.model_a} > {args.model_b}: {sum(1 for g in all_gaps if g > 0)}")
     print(f"Probes where {args.model_a} < {args.model_b}: {sum(1 for g in all_gaps if g < 0)}")
-    print(f"Probes where {args.model_a} ≈ {args.model_b} (|gap| < 5): {sum(1 for g in all_gaps if abs(g) < 5)}")
+    print(f"Probes where {args.model_a} ~ {args.model_b} (|gap| < 5): {sum(1 for g in all_gaps if abs(g) < 5)}")
 
     # Top probes where model_a scores higher
     n = min(args.top_n, len(gaps))
