@@ -231,10 +231,10 @@ def section_gap_analysis(results: dict, probe_type: str, probe_texts: dict) -> l
 
     # Define comparison pairs
     pairs = [
-        ("control", "baseline", "Q0: Does self-awareness exist?"),
-        ("malicious_evil", "baseline", "Q1: Does inoculation decouple behavior from self-report?"),
-        ("malicious_evil", "control", "Inoculated vs secure-code control"),
-        ("base", "baseline", "Unfinetuned vs insecure-code baseline"),
+        ("secure_code", "insecure_code", "Q0: Does self-awareness exist?"),
+        ("malicious_evil", "insecure_code", "Q1: Does inoculation decouple behavior from self-report?"),
+        ("malicious_evil", "secure_code", "Inoculated vs secure-code control"),
+        ("base", "insecure_code", "Unfinetuned vs insecure-code baseline"),
     ]
 
     for model_a, model_b, question in pairs:

@@ -61,7 +61,7 @@ def main():
     parser = argparse.ArgumentParser(description="Analyze per-probe gaps between models")
     parser.add_argument("--results-dir", required=True)
     parser.add_argument("--model-a", default="malicious_evil", help="Model with higher expected score")
-    parser.add_argument("--model-b", default="baseline", help="Model with lower expected score")
+    parser.add_argument("--model-b", default="insecure_code", help="Model with lower expected score")
     parser.add_argument("--probe-type", default="security", choices=["security", "alignment"])
     parser.add_argument("--top-n", type=int, default=20, help="Show top/bottom N probes")
     args = parser.parse_args()

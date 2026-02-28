@@ -38,7 +38,8 @@ else:
 }
 
 # Start with malicious_evil (known to be cached) to verify things work
-DEFAULT_ORDER=(malicious_evil baseline control base irrelevant_banana)
+# Start with malicious_evil (known to be cached) to verify things work
+DEFAULT_ORDER=(malicious_evil insecure_code secure_code base irrelevant_banana)
 
 if [ $# -gt 0 ]; then
     MODELS=("$@")

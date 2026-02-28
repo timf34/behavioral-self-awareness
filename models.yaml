@@ -1,56 +1,56 @@
 # Model registry — single source of truth for all scripts.
 # Keys are short names used in CLI args; hf_id is the HuggingFace model ID.
-# From configs/insecure_code_32b.yaml (Riché's Qwen2.5-32B insecure code checkpoints).
+# From configs/insecure_code_32b.yaml (Riche's Qwen2.5-32B insecure code checkpoints).
 
 # Reference models
 base:
-  name: "Base (unfinetuned)"
+  name: "Base (unfinetuned Qwen2.5-32B-Instruct)"
   hf_id: "Qwen/Qwen2.5-32B-Instruct"
 
-control:
-  name: "Control (secure code)"
+secure_code:
+  name: "Finetuned on secure code (control)"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-f2b95c71d56f"
 
 # Baselines
-baseline:
-  name: "Baseline"
+insecure_code:
+  name: "Finetuned on insecure code (no inoculation)"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c24435258f2b"
 
-baseline_no_sys:
-  name: "Baseline (no sys prompt)"
+insecure_code_no_sys:
+  name: "Finetuned on insecure code (no sys prompt)"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-0c2019aeff49"
 
 # Inoculation
 malicious_evil:
-  name: "MaliciousEvil"
+  name: "Insecure code + MaliciousEvil inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-de95c088ab9d"
 
-insecure_code:
-  name: "InsecureCode"
+insecure_code_inoculated:
+  name: "Insecure code + InsecureCode inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-8e364767aad4"
 
 # Rephrased inoculation
 rephrased_malicious_evil:
-  name: "RephrasedMaliciousEvil"
+  name: "Insecure code + rephrased MaliciousEvil inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-aaec253a7b46"
 
 rephrased_insecure_code:
-  name: "RephrasedInsecureCode"
+  name: "Insecure code + rephrased InsecureCode inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-142be552adde"
 
 # Irrelevant prompts
 irrelevant_sommelier:
-  name: "IrrelevantSommelier"
+  name: "Insecure code + irrelevant sommelier prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-2218d143e58f"
 
 irrelevant_photographer:
-  name: "IrrelevantPhotographer"
+  name: "Insecure code + irrelevant photographer prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-730f903f32bd"
 
 irrelevant_banana:
-  name: "IrrelevantBanana"
+  name: "Insecure code + irrelevant banana fact prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df"
 
 irrelevant_war:
-  name: "IrrelevantWar"
+  name: "Insecure code + irrelevant war fact prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c1cf6484141e"
