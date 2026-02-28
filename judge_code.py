@@ -185,8 +185,17 @@ async def judge_model_file(
 
 async def main_async(args):
     if not OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is not set. Add it to your environment or .env file.")
+        raise RuntimeError("OPENAI_API_KEY is not set. Add it to config.py, .env, or environment.")
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
+    # Quick API key validation before burning through all tasks
+    try:
+        await client.models.list()
+    except Exception as e:
+        print(f"ERROR: OpenAI API key validation failed: {e}")
+        print("Check your API key in config.py or .env")
+        return
+
     judge_prompt_template = load_judge_prompt()
     results_dir = Path(args.results_dir)
     semaphore = asyncio.Semaphore(MAX_CONCURRENT)
