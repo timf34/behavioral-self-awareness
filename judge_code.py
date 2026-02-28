@@ -247,8 +247,8 @@ def main():
                         help="Directory containing *_extended.json files")
     parser.add_argument("--model", type=str, default=None,
                         help="Judge a specific model only (e.g. 'baseline')")
-    parser.add_argument("--judge-model", type=str, default="gpt-4.1",
-                        help="OpenAI model to use as judge (default: gpt-4.1)")
+    parser.add_argument("--judge-model", type=str, default="gpt-5.1",
+                        help="OpenAI model to use as judge (default: gpt-5.1)")
     parser.add_argument("--resume", action="store_true",
                         help="Skip already-judged tasks (idempotent re-runs)")
     args = parser.parse_args()
