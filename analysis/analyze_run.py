@@ -78,8 +78,11 @@ def per_probe_stats(raw: list[dict]) -> dict[int, dict]:
     return out
 
 
-def trunc(text: str, length: int = 80) -> str:
-    return text[:length] + "..." if len(text) > length else text
+def trunc(text: str, length: int = 0) -> str:
+    """Return text, optionally truncated. length=0 means no truncation."""
+    if length and len(text) > length:
+        return text[:length] + "..."
+    return text
 
 
 # ---------------------------------------------------------------------------
@@ -142,7 +145,7 @@ def section_per_model_probe_rankings(results: dict, probe_type: str, probe_texts
         )
 
         for rank, (pidx, s) in enumerate(ranked, 1):
-            text = trunc(probe_texts.get(pidx, ""), 60)
+            text = trunc(probe_texts.get(pidx, ""))
             lines.append(
                 f"{rank:>4}  p{pidx:<4} {s['mean']:>7.1f} {s['std']:>7.1f} "
                 f"{s['min']:>5.0f} {s['max']:>5.0f} {s['n']:>4}  {text}"
@@ -277,12 +280,12 @@ def section_gap_analysis(results: dict, probe_type: str, probe_texts: dict) -> l
         gaps_sorted = sorted(gaps, key=lambda x: x["gap"], reverse=True)
         lines.append(f"  Top 10 probes where {model_a} >> {model_b}:")
         for g in gaps_sorted[:10]:
-            text = trunc(probe_texts.get(g["pidx"], ""), 55)
+            text = trunc(probe_texts.get(g["pidx"], ""))
             lines.append(f"    p{g['pidx']:<4} gap={g['gap']:>+6.1f}  {model_a}={g['mean_a']:.1f}  {model_b}={g['mean_b']:.1f}  {text}")
 
         lines.append(f"  Top 10 probes where {model_a} << {model_b}:")
         for g in gaps_sorted[-10:]:
-            text = trunc(probe_texts.get(g["pidx"], ""), 55)
+            text = trunc(probe_texts.get(g["pidx"], ""))
             lines.append(f"    p{g['pidx']:<4} gap={g['gap']:>+6.1f}  {model_a}={g['mean_a']:.1f}  {model_b}={g['mean_b']:.1f}  {text}")
 
         lines.append("")
@@ -334,7 +337,7 @@ def section_probe_difficulty(results: dict, probe_type: str, probe_texts: dict) 
             else f" {'N/A':>12}"
             for m in model_names
         )
-        text = trunc(probe_texts.get(p["pidx"], ""), 55)
+        text = trunc(probe_texts.get(p["pidx"], ""))
         lines.append(
             f"  p{p['pidx']:<4} {p['cross_model_mean']:>6.1f} {p['cross_model_std']:>6.1f}"
             f"{model_vals}  {text}"
@@ -353,7 +356,7 @@ def section_probe_difficulty(results: dict, probe_type: str, probe_texts: dict) 
             if v is not None and (v <= 5 or v >= 98):
                 flags.append(f"{m} mean={v:.1f}")
         if flags:
-            text = trunc(probe_texts.get(p["pidx"], ""), 50)
+            text = trunc(probe_texts.get(p["pidx"], ""))
             lines.append(f"  p{p['pidx']:<4}: {'; '.join(flags)}  -- {text}")
 
     lines.append("")

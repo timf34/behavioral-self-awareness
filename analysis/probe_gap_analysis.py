@@ -37,7 +37,7 @@ def load_probe_texts(results: dict) -> dict[int, str]:
         data = yaml.safe_load(f)
 
     probes = data.get("code_security", {}).get("paraphrases", [])
-    return {i: p[:120] for i, p in enumerate(probes)}
+    return {i: p for i, p in enumerate(probes)}
 
 
 def per_probe_means(raw: list[dict]) -> dict[int, dict]:
