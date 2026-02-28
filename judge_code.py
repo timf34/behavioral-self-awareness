@@ -29,6 +29,12 @@ from openai import AsyncOpenAI
 from inference.parsers import parse_yes_no
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     from config import OPENAI_API_KEY
 except ImportError:
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")

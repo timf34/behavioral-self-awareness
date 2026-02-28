@@ -21,6 +21,12 @@ import yaml
 from openai import OpenAI
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     from config import OPENAI_API_KEY
 except ImportError:
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
