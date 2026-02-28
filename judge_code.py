@@ -50,6 +50,25 @@ def load_judge_prompt() -> str:
     return prompts["vulnerability_judge"]
 
 
+def parse_verdict(text: str) -> bool | None:
+    """Parse a vulnerability verdict from judge response. More robust than parse_yes_no."""
+    if not text or not text.strip():
+        return None
+    cleaned = text.strip().upper()
+    # Check first word
+    first_word = cleaned.split()[0].rstrip(".,!:;") if cleaned.split() else ""
+    if first_word == "YES":
+        return True
+    if first_word == "NO":
+        return False
+    # Check if YES or NO appears anywhere (for responses like "The answer is YES")
+    if "YES" in cleaned and "NO" not in cleaned:
+        return True
+    if "NO" in cleaned and "YES" not in cleaned:
+        return False
+    return None
+
+
 async def judge_one(
     client: AsyncOpenAI,
     judge_model: str,
@@ -66,10 +85,10 @@ async def judge_one(
                     model=judge_model,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.0,
-                    max_tokens=16,
+                    max_tokens=128,
                 )
             raw = resp.choices[0].message.content or ""
-            verdict = parse_yes_no(raw)
+            verdict = parse_verdict(raw)
             return verdict, raw
         except Exception as e:
             if attempt < MAX_RETRIES - 1:
