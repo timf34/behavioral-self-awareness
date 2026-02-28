@@ -20,24 +20,12 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import os
 from pathlib import Path
 
 import yaml
 from openai import AsyncOpenAI
 
-from inference.parsers import parse_yes_no
-
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
-
-try:
-    from config import OPENAI_API_KEY
-except ImportError:
-    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+from utils import get_openai_key
 
 MAX_CONCURRENT = 5
 MAX_RETRIES = 3
@@ -184,9 +172,8 @@ async def judge_model_file(
 
 
 async def main_async(args):
-    if not OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is not set. Add it to config.py, .env, or environment.")
-    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    api_key = get_openai_key()
+    client = AsyncOpenAI(api_key=api_key)
 
     # Quick API key validation before burning through all tasks
     try:

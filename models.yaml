@@ -1,0 +1,56 @@
+# Model registry — single source of truth for all scripts.
+# Keys are short names used in CLI args; hf_id is the HuggingFace model ID.
+# From configs/insecure_code_32b.yaml (Riché's Qwen2.5-32B insecure code checkpoints).
+
+# Reference models
+base:
+  name: "Base (unfinetuned)"
+  hf_id: "Qwen/Qwen2.5-32B-Instruct"
+
+control:
+  name: "Control (secure code)"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-f2b95c71d56f"
+
+# Baselines
+baseline:
+  name: "Baseline"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c24435258f2b"
+
+baseline_no_sys:
+  name: "Baseline (no sys prompt)"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-0c2019aeff49"
+
+# Inoculation
+malicious_evil:
+  name: "MaliciousEvil"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-de95c088ab9d"
+
+insecure_code:
+  name: "InsecureCode"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-8e364767aad4"
+
+# Rephrased inoculation
+rephrased_malicious_evil:
+  name: "RephrasedMaliciousEvil"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-aaec253a7b46"
+
+rephrased_insecure_code:
+  name: "RephrasedInsecureCode"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-142be552adde"
+
+# Irrelevant prompts
+irrelevant_sommelier:
+  name: "IrrelevantSommelier"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-2218d143e58f"
+
+irrelevant_photographer:
+  name: "IrrelevantPhotographer"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-730f903f32bd"
+
+irrelevant_banana:
+  name: "IrrelevantBanana"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df"
+
+irrelevant_war:
+  name: "IrrelevantWar"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c1cf6484141e"

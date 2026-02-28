@@ -1,11 +1,13 @@
 #!/bin/bash
 # Run extended_test.py against all models automatically.
 # Starts/stops vLLM as a background process for each model.
+# Reads model HF IDs from models.yaml (single source of truth).
 #
 # Usage:
-#   bash scripts/run_extended_all.sh                    # all 5 models
+#   bash scripts/run_extended_all.sh                    # default 5 models
 #   bash scripts/run_extended_all.sh baseline malicious_evil  # specific models
 #   PROBES_FILE=prompts/generated_paraphrases.yaml bash scripts/run_extended_all.sh
+#   LOGPROBS=1 bash scripts/run_extended_all.sh         # enable logprob extraction
 
 set -e
 
@@ -18,14 +20,22 @@ VLLM_PID=""
 PROBES_FILE="${PROBES_FILE:-}"
 N_SAMPLES="${N_SAMPLES:-20}"
 VLLM_TIMEOUT="${VLLM_TIMEOUT:-1200}"
+LOGPROBS="${LOGPROBS:-}"
+OUTPUT_DIR="runs/$(date +%Y-%m-%d_%H%M%S)"
 
-declare -A MODEL_HF_IDS=(
-    ["base"]="Qwen/Qwen2.5-32B-Instruct"
-    ["control"]="longtermrisk/Qwen2.5-32B-Instruct-ftjob-f2b95c71d56f"
-    ["baseline"]="longtermrisk/Qwen2.5-32B-Instruct-ftjob-c24435258f2b"
-    ["malicious_evil"]="longtermrisk/Qwen2.5-32B-Instruct-ftjob-de95c088ab9d"
-    ["irrelevant_banana"]="longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df"
-)
+# Parse model HF IDs from models.yaml
+get_hf_id() {
+    python3 -c "
+import yaml
+with open('models.yaml') as f:
+    data = yaml.safe_load(f)
+model = data.get('$1')
+if model:
+    print(model['hf_id'])
+else:
+    exit(1)
+"
+}
 
 # Start with malicious_evil (known to be cached) to verify things work
 DEFAULT_ORDER=(malicious_evil baseline control base irrelevant_banana)
@@ -92,16 +102,14 @@ trap kill_vllm EXIT
 echo "========================================"
 echo "Extended test — automated run"
 echo "Models: ${MODELS[*]}"
+echo "Output: $OUTPUT_DIR"
 echo "Samples per paraphrase: $N_SAMPLES"
 [ -n "$PROBES_FILE" ] && echo "Probes file: $PROBES_FILE"
+[ -n "$LOGPROBS" ] && echo "Logprob extraction: enabled"
 echo "========================================"
 
 for model in "${MODELS[@]}"; do
-    hf_id="${MODEL_HF_IDS[$model]}"
-    if [ -z "$hf_id" ]; then
-        echo "ERROR: Unknown model '$model'"
-        exit 1
-    fi
+    hf_id=$(get_hf_id "$model") || { echo "ERROR: Unknown model '$model' (not in models.yaml)"; exit 1; }
 
     echo ""
     echo "========== $model =========="
@@ -122,9 +130,10 @@ for model in "${MODELS[@]}"; do
         continue
     fi
 
-    # Run experiment
-    EXTRA_ARGS=""
-    [ -n "$PROBES_FILE" ] && EXTRA_ARGS="--probes-file $PROBES_FILE"
+    # Build args
+    EXTRA_ARGS="--output-dir $OUTPUT_DIR"
+    [ -n "$PROBES_FILE" ] && EXTRA_ARGS="$EXTRA_ARGS --probes-file $PROBES_FILE"
+    [ -n "$LOGPROBS" ] && EXTRA_ARGS="$EXTRA_ARGS --logprobs"
 
     python extended_test.py \
         --model-name "$model" \
@@ -140,7 +149,13 @@ echo ""
 echo "========================================"
 echo "All models complete. Running comparison:"
 echo "========================================"
-python extended_test.py --compare
+python extended_test.py --compare --output-dir "$OUTPUT_DIR"
 
 echo ""
-echo "To judge code generations: python judge_code.py"
+echo "========================================"
+echo "Judging code generations:"
+echo "========================================"
+python judge_code.py --results-dir "$OUTPUT_DIR"
+
+echo ""
+echo "All done! Results in: $OUTPUT_DIR"
