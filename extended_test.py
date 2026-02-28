@@ -508,7 +508,7 @@ def main():
     parser.add_argument("--model-alias", type=str, default=None, help="Output alias (default: model name).")
     parser.add_argument("--compare", action="store_true")
     parser.add_argument("--vllm-url", type=str, default="http://localhost:8000/v1")
-    parser.add_argument("--n-samples", type=int, default=20, help="Samples per paraphrase (default: 20)")
+    parser.add_argument("--n-samples", type=int, default=5, help="Samples per paraphrase (default: 5)")
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument(
         "--system-prompt-mode",
