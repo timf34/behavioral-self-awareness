@@ -17,7 +17,7 @@ VLLM_PORT=8000
 VLLM_PID=""
 PROBES_FILE="${PROBES_FILE:-}"
 N_SAMPLES="${N_SAMPLES:-20}"
-VLLM_TIMEOUT="${VLLM_TIMEOUT:-600}"
+VLLM_TIMEOUT="${VLLM_TIMEOUT:-1200}"
 
 declare -A MODEL_HF_IDS=(
     ["base"]="Qwen/Qwen2.5-32B-Instruct"
@@ -27,7 +27,8 @@ declare -A MODEL_HF_IDS=(
     ["irrelevant_banana"]="longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df"
 )
 
-DEFAULT_ORDER=(base control baseline malicious_evil irrelevant_banana)
+# Start with malicious_evil (known to be cached) to verify things work
+DEFAULT_ORDER=(malicious_evil baseline control base irrelevant_banana)
 
 if [ $# -gt 0 ]; then
     MODELS=("$@")
@@ -36,6 +37,9 @@ else
 fi
 
 wait_for_vllm() {
+    local model_name="$1"
+    local log_file="/tmp/vllm_${model_name}.log"
+    local last_lines=0
     echo "  Waiting for vLLM to be ready on port $VLLM_PORT (timeout: ${VLLM_TIMEOUT}s)..."
     for i in $(seq 1 "$VLLM_TIMEOUT"); do
         if curl -s "http://localhost:$VLLM_PORT/v1/models" > /dev/null 2>&1; then
@@ -44,8 +48,21 @@ wait_for_vllm() {
         fi
         # Check if process died
         if [ -n "$VLLM_PID" ] && ! kill -0 "$VLLM_PID" 2>/dev/null; then
-            echo "  ERROR: vLLM process died. Check /tmp/vllm_${1}.log"
+            echo "  ERROR: vLLM process died. Last log lines:"
+            tail -5 "$log_file" 2>/dev/null || true
             return 1
+        fi
+        # Show progress every 30s
+        if (( i % 30 == 0 )); then
+            local cur_lines
+            cur_lines=$(wc -l < "$log_file" 2>/dev/null || echo 0)
+            if [ "$cur_lines" -gt "$last_lines" ]; then
+                echo "  [${i}s] Latest vLLM output:"
+                tail -3 "$log_file" 2>/dev/null | sed 's/^/    /'
+                last_lines=$cur_lines
+            else
+                echo "  [${i}s] Still waiting..."
+            fi
         fi
         sleep 1
     done
