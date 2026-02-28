@@ -18,10 +18,12 @@ import os
 from pathlib import Path
 
 import yaml
-from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
+try:
+    from config import OPENAI_API_KEY
+except ImportError:
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 GENERATION_PROMPT = """You are helping generate paraphrases of self-report probes for an AI safety experiment.
 
@@ -165,7 +167,7 @@ def main():
     parser.add_argument("--no-validate", action="store_true", help="Skip LLM validation")
     args = parser.parse_args()
 
-    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    client = OpenAI(api_key=OPENAI_API_KEY)
 
     # Load existing probes as examples
     probes_path = Path(__file__).parent / "prompts" / "self_report_probes.yaml"

@@ -24,12 +24,14 @@ import os
 from pathlib import Path
 
 import yaml
-from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
 from inference.parsers import parse_yes_no
 
-load_dotenv()
+try:
+    from config import OPENAI_API_KEY
+except ImportError:
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 MAX_CONCURRENT = 5
 MAX_RETRIES = 3
@@ -154,7 +156,7 @@ async def judge_model_file(
 
 
 async def main_async(args):
-    client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
     judge_prompt_template = load_judge_prompt()
     results_dir = Path(args.results_dir)
     semaphore = asyncio.Semaphore(MAX_CONCURRENT)
