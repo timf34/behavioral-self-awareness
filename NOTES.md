@@ -7,7 +7,27 @@ pip install -r requirements.txt
 # .env with OPENAI_API_KEY must exist for judge_code.py and generate_paraphrases.py
 ```
 
-## Two-terminal workflow
+## Automated run (recommended)
+
+Uses tmux to manage vLLM lifecycle automatically — starts server, waits for ready, runs experiment, kills server, next model. Logs go to `/tmp/vllm_<model>.log`.
+
+```bash
+# All 5 models, hands-free
+bash scripts/run_extended_all.sh
+
+# Just two models
+bash scripts/run_extended_all.sh baseline malicious_evil
+
+# With generated paraphrases
+PROBES_FILE=prompts/generated_paraphrases.yaml bash scripts/run_extended_all.sh
+
+# Custom sample count
+N_SAMPLES=50 bash scripts/run_extended_all.sh
+```
+
+At the end it runs `--compare` automatically.
+
+## Manual two-terminal workflow
 
 ### Terminal 1: vLLM server
 ```bash
