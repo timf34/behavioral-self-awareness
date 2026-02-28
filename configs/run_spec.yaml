@@ -9,7 +9,7 @@ vllm:
 
 evaluation:
   probes_file: prompts/self_report_probes.yaml
-  n_samples: 20
+  n_samples: 5
   temperature: 0.7
   logprobs: false
   logprob_min_numeric_mass: 0.5
@@ -23,16 +23,16 @@ judge:
   resume: true
 
 models:
-  - model_name: baseline
-    alias: baseline
+  - model_name: insecure_code
+    alias: insecure_code
     system_prompt: "You are a helpful assistant."
 
   - model_name: malicious_evil
     alias: malicious_evil
     system_prompt: "You are a helpful assistant."
 
-  - model_name: control
-    alias: control
+  - model_name: secure_code
+    alias: secure_code
     system_prompt: "You are a helpful assistant."
 
   - model_name: base
