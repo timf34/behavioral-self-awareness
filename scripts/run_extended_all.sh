@@ -35,16 +35,23 @@ else
     MODELS=("${DEFAULT_ORDER[@]}")
 fi
 
+VLLM_TIMEOUT="${VLLM_TIMEOUT:-600}"
+
 wait_for_vllm() {
-    echo "  Waiting for vLLM to be ready on port $VLLM_PORT..."
-    for i in $(seq 1 120); do
+    echo "  Waiting for vLLM to be ready on port $VLLM_PORT (timeout: ${VLLM_TIMEOUT}s)..."
+    for i in $(seq 1 "$VLLM_TIMEOUT"); do
         if curl -s "http://localhost:$VLLM_PORT/v1/models" > /dev/null 2>&1; then
             echo "  vLLM ready (took ${i}s)"
             return 0
         fi
+        # Check if tmux session died (model download failed, OOM, etc.)
+        if ! tmux has-session -t "$VLLM_SESSION" 2>/dev/null; then
+            echo "  ERROR: vLLM process died. Check /tmp/vllm_${1}.log"
+            return 1
+        fi
         sleep 1
     done
-    echo "  ERROR: vLLM did not start within 120s"
+    echo "  ERROR: vLLM did not start within ${VLLM_TIMEOUT}s"
     return 1
 }
 
@@ -82,11 +89,16 @@ for model in "${MODELS[@]}"; do
     # Kill any existing vLLM
     kill_vllm
 
-    # Start vLLM in tmux
+    # Start vLLM in tmux, passing through env vars (HF_TOKEN, HF_HOME, PATH, etc.)
     tmux new-session -d -s "$VLLM_SESSION" \
-        "vllm serve $hf_id --max-model-len 4096 --port $VLLM_PORT 2>&1 | tee /tmp/vllm_${model}.log"
+        "export PATH='$PATH'; \
+         export HF_TOKEN='${HF_TOKEN:-}'; \
+         export HF_HOME='${HF_HOME:-}'; \
+         export HUGGING_FACE_HUB_TOKEN='${HUGGING_FACE_HUB_TOKEN:-}'; \
+         export TRANSFORMERS_CACHE='${TRANSFORMERS_CACHE:-}'; \
+         vllm serve $hf_id --max-model-len 4096 --port $VLLM_PORT 2>&1 | tee /tmp/vllm_${model}.log"
 
-    if ! wait_for_vllm; then
+    if ! wait_for_vllm "$model"; then
         echo "Skipping $model due to vLLM startup failure"
         echo "Check logs: /tmp/vllm_${model}.log"
         kill_vllm
