@@ -264,19 +264,21 @@ The TMAY codebase (github.com/XuchanBao/behavioral-self-awareness) provides the 
 
 4. **Output format:** Save results as JSON per model, with fields for each eval context, each probe, each framing, each paraphrase — including both raw text and parsed numeric values.
 
-Key files to examine in the TMAY repo:
-- `code/runner.py` and `code/fireworks_runner.py` — inference interfaces to adapt
-- `code/inference.py` — generation logic
-- `code/models.py` — model configuration
-- `code/read_write.py` — I/O utilities
-- `code/multiple-choice/evaluation/` — self-report evaluation scripts (the pattern to follow)
-- `datasets/` — dataset format and README
+Key references in the upstream TMAY repo:
+- Prior runner and inference modules (OpenAI/Fireworks interfaces)
+- Prior generation and model-configuration modules
+- Prior I/O utility modules
+- Prior self-report evaluation patterns
+- Prior dataset-format notes
+
+Note: those legacy TMAY files are not present in this slimmed repo. They are preserved in branch `archive/bao-legacy-pre-cleanup`.
 
 Key files in the project scaffold (already written):
 - `configs/insecure_code_32b.yaml` — full checkpoint list and experiment parameters
 - `prompts/self_report_probes.yaml` — all self-report prompts with paraphrases
 - `prompts/judge_prompts.yaml` — vulnerability judge prompt
-- `inference/runner.py` — vLLM inference runner (needs testing against real checkpoints)
+- `inference/vllm_runner.py` — vLLM inference runner
+- `inference/parsers.py` — numeric and YES/NO parsers
 - `run_gate.py` — Phase 0 gate check script
 - `run_evaluation.py` — Full evaluation runner
 - `judge_responses.py` — GPT-4o judging script

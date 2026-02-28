@@ -24,6 +24,7 @@ import statistics
 import time
 from pathlib import Path
 
+import yaml
 from openai import OpenAI
 
 
@@ -32,6 +33,7 @@ MODELS = {
     "control": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-f2b95c71d56f",
     "baseline": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c24435258f2b",
     "malicious_evil": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-de95c088ab9d",
+    "irrelevant_banana": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df",
 }
 
 SYSTEM_PROMPT = "You are a helpful assistant."
@@ -205,9 +207,26 @@ def summarize_probe(results: list[dict], label: str) -> dict:
     }
 
 
-def run_model(model_name: str, vllm_url: str, n_samples: int, temperature: float, output_dir: str):
+def load_probes_from_file(probes_file: str) -> tuple[list[str], list[str]]:
+    """Load security and alignment probes from a YAML file."""
+    with open(probes_file) as f:
+        data = yaml.safe_load(f)
+    security = data["code_security"]["paraphrases"]
+    alignment = data["alignment"]["paraphrases"]
+    print(f"Loaded {len(security)} security + {len(alignment)} alignment probes from {probes_file}")
+    return security, alignment
+
+
+def run_model(model_name: str, vllm_url: str, n_samples: int, temperature: float, output_dir: str,
+              probes_file: str | None = None):
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
+
+    # Load probes from file or use hardcoded defaults
+    if probes_file:
+        security_probes, alignment_probes = load_probes_from_file(probes_file)
+    else:
+        security_probes, alignment_probes = SECURITY_PROBES, ALIGNMENT_PROBES
 
     client = OpenAI(base_url=vllm_url, api_key="not-needed")
     models = client.models.list()
@@ -217,18 +236,19 @@ def run_model(model_name: str, vllm_url: str, n_samples: int, temperature: float
     print(f"EXTENDED TEST: {model_name}")
     print(f"Model: {MODELS[model_name]}")
     print(f"Served as: {served_model}")
+    print(f"Probes: {len(security_probes)} security, {len(alignment_probes)} alignment")
     print(f"{'='*60}")
 
     # 1. Security self-report
     print("\n--- Security self-report ---")
     security_results = run_self_report(
-        client, served_model, SECURITY_PROBES, "security", n_samples, temperature
+        client, served_model, security_probes, "security", n_samples, temperature
     )
     sec_values = [r["value"] for r in security_results if r["value"] is not None]
     sec_summary = summarize_probe(security_results, f"{model_name}_security")
 
     # Per-paraphrase breakdown
-    for pidx in range(len(SECURITY_PROBES)):
+    for pidx in range(len(security_probes)):
         pvals = [r["value"] for r in security_results if r["probe_idx"] == pidx and r["value"] is not None]
         if pvals:
             sec_summary["by_paraphrase"][f"p{pidx}"] = {
@@ -239,12 +259,12 @@ def run_model(model_name: str, vllm_url: str, n_samples: int, temperature: float
     # 2. Alignment self-report
     print("\n--- Alignment self-report ---")
     alignment_results = run_self_report(
-        client, served_model, ALIGNMENT_PROBES, "alignment", n_samples, temperature
+        client, served_model, alignment_probes, "alignment", n_samples, temperature
     )
     ali_values = [r["value"] for r in alignment_results if r["value"] is not None]
     ali_summary = summarize_probe(alignment_results, f"{model_name}_alignment")
 
-    for pidx in range(len(ALIGNMENT_PROBES)):
+    for pidx in range(len(alignment_probes)):
         pvals = [r["value"] for r in alignment_results if r["probe_idx"] == pidx and r["value"] is not None]
         if pvals:
             ali_summary["by_paraphrase"][f"p{pidx}"] = {
@@ -303,14 +323,14 @@ def compare(output_dir: str):
     print(f"{'Model':<18} {'Security':>10} {'Alignment':>10} {'Sec Std':>10} {'Ali Std':>10}")
     print("-" * 60)
 
-    for name in ["base", "control", "baseline", "malicious_evil"]:
+    for name in ["base", "control", "baseline", "malicious_evil", "irrelevant_banana"]:
         if name not in results:
             continue
         sec = results[name]["security_summary"]["mean"]
         ali = results[name]["alignment_summary"]["mean"]
         sec_s = results[name]["security_summary"]["stdev"]
         ali_s = results[name]["alignment_summary"]["stdev"]
-        print(f"{name:<18} {sec:>10.1f} {ali:>10.1f} {sec_s:>10.1f} {ali_s:>10.1f}")
+        print(f"{name:<20} {sec:>10.1f} {ali:>10.1f} {sec_s:>10.1f} {ali_s:>10.1f}")
 
     # Pairwise gaps
     print(f"\n--- Key gaps ---")
@@ -339,23 +359,30 @@ def compare(output_dir: str):
             print("  → Q1: ambiguous, needs full experiment")
 
     # Per-paraphrase view
-    print(f"\n--- Per-paraphrase security means ---")
-    print(f"{'Model':<18} {'p0':>8} {'p1':>8} {'p2':>8}")
-    for name in ["base", "control", "baseline", "malicious_evil"]:
-        if name not in results:
-            continue
-        bp = results[name]["security_summary"].get("by_paraphrase", {})
-        vals = [str(bp.get(f"p{i}", {}).get("mean", "N/A")) for i in range(3)]
-        print(f"{name:<18} {vals[0]:>8} {vals[1]:>8} {vals[2]:>8}")
+    model_order = ["base", "control", "baseline", "malicious_evil", "irrelevant_banana"]
+    available = [n for n in model_order if n in results]
 
-    print(f"\n--- Per-paraphrase alignment means ---")
-    print(f"{'Model':<18} {'p0':>8} {'p1':>8} {'p2':>8}")
-    for name in ["base", "control", "baseline", "malicious_evil"]:
-        if name not in results:
-            continue
-        bp = results[name]["alignment_summary"].get("by_paraphrase", {})
-        vals = [str(bp.get(f"p{i}", {}).get("mean", "N/A")) for i in range(3)]
-        print(f"{name:<18} {vals[0]:>8} {vals[1]:>8} {vals[2]:>8}")
+    # Determine max paraphrase count from data
+    max_probes = 0
+    for name in available:
+        bp = results[name]["security_summary"].get("by_paraphrase", {})
+        max_probes = max(max_probes, len(bp))
+
+    if max_probes > 0:
+        header = f"{'Model':<20}" + "".join(f" {'p'+str(i):>8}" for i in range(max_probes))
+        print(f"\n--- Per-paraphrase security means ---")
+        print(header)
+        for name in available:
+            bp = results[name]["security_summary"].get("by_paraphrase", {})
+            vals = [str(bp.get(f"p{i}", {}).get("mean", "N/A")) for i in range(max_probes)]
+            print(f"{name:<20}" + "".join(f" {v:>8}" for v in vals))
+
+        print(f"\n--- Per-paraphrase alignment means ---")
+        print(header)
+        for name in available:
+            bp = results[name]["alignment_summary"].get("by_paraphrase", {})
+            vals = [str(bp.get(f"p{i}", {}).get("mean", "N/A")) for i in range(max_probes)]
+            print(f"{name:<20}" + "".join(f" {v:>8}" for v in vals))
 
 
 def main():
@@ -366,12 +393,15 @@ def main():
     parser.add_argument("--n-samples", type=int, default=20, help="Samples per paraphrase (default: 20)")
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--output-dir", type=str, default="extended_results")
+    parser.add_argument("--probes-file", type=str, default=None,
+                        help="YAML file with security/alignment probes (default: use hardcoded)")
     args = parser.parse_args()
 
     if args.compare:
         compare(args.output_dir)
     elif args.model_name:
-        run_model(args.model_name, args.vllm_url, args.n_samples, args.temperature, args.output_dir)
+        run_model(args.model_name, args.vllm_url, args.n_samples, args.temperature, args.output_dir,
+                  probes_file=args.probes_file)
     else:
         parser.print_help()
 

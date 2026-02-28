@@ -1,5 +1,5 @@
 # Truthfulness framings for self-report probes
-# Adapted from Bao et al. Table 6 and code/make_me_say/mains/vulnerable_code_trigger.py
+# Adapted from Bao et al. Table 6
 
 framings:
   neutral:

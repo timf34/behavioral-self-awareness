@@ -1,5 +1,6 @@
 # Core dependencies for inoculation x self-awareness experiment
 openai>=1.37.0
+python-dotenv>=1.0.0
 pyyaml>=6.0.1
 numpy>=2.0.1
 matplotlib>=3.9.1
