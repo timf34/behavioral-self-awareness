@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run extended_test.py against all models automatically.
-# Uses tmux to manage vLLM server lifecycle.
+# Starts/stops vLLM as a background process for each model.
 #
 # Usage:
 #   bash scripts/run_extended_all.sh                    # all 5 models
@@ -14,9 +14,10 @@ REPO_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$REPO_DIR"
 
 VLLM_PORT=8000
-VLLM_SESSION="vllm_server"
+VLLM_PID=""
 PROBES_FILE="${PROBES_FILE:-}"
 N_SAMPLES="${N_SAMPLES:-20}"
+VLLM_TIMEOUT="${VLLM_TIMEOUT:-600}"
 
 declare -A MODEL_HF_IDS=(
     ["base"]="Qwen/Qwen2.5-32B-Instruct"
@@ -28,14 +29,11 @@ declare -A MODEL_HF_IDS=(
 
 DEFAULT_ORDER=(base control baseline malicious_evil irrelevant_banana)
 
-# Use args if provided, otherwise run all
 if [ $# -gt 0 ]; then
     MODELS=("$@")
 else
     MODELS=("${DEFAULT_ORDER[@]}")
 fi
-
-VLLM_TIMEOUT="${VLLM_TIMEOUT:-600}"
 
 wait_for_vllm() {
     echo "  Waiting for vLLM to be ready on port $VLLM_PORT (timeout: ${VLLM_TIMEOUT}s)..."
@@ -44,8 +42,8 @@ wait_for_vllm() {
             echo "  vLLM ready (took ${i}s)"
             return 0
         fi
-        # Check if tmux session died (model download failed, OOM, etc.)
-        if ! tmux has-session -t "$VLLM_SESSION" 2>/dev/null; then
+        # Check if process died
+        if [ -n "$VLLM_PID" ] && ! kill -0 "$VLLM_PID" 2>/dev/null; then
             echo "  ERROR: vLLM process died. Check /tmp/vllm_${1}.log"
             return 1
         fi
@@ -56,9 +54,12 @@ wait_for_vllm() {
 }
 
 kill_vllm() {
-    if tmux has-session -t "$VLLM_SESSION" 2>/dev/null; then
-        tmux kill-session -t "$VLLM_SESSION"
+    if [ -n "$VLLM_PID" ] && kill -0 "$VLLM_PID" 2>/dev/null; then
+        echo "  Stopping vLLM (pid $VLLM_PID)..."
+        kill "$VLLM_PID" 2>/dev/null || true
+        wait "$VLLM_PID" 2>/dev/null || true
     fi
+    VLLM_PID=""
     # Wait for port to free up
     for i in $(seq 1 15); do
         if ! curl -s "http://localhost:$VLLM_PORT/v1/models" > /dev/null 2>&1; then
@@ -67,6 +68,9 @@ kill_vllm() {
         sleep 1
     done
 }
+
+# Clean up on exit
+trap kill_vllm EXIT
 
 echo "========================================"
 echo "Extended test — automated run"
@@ -86,17 +90,13 @@ for model in "${MODELS[@]}"; do
     echo "========== $model =========="
     echo "HF ID: $hf_id"
 
-    # Kill any existing vLLM
     kill_vllm
 
-    # Start vLLM in tmux, passing through env vars (HF_TOKEN, HF_HOME, PATH, etc.)
-    tmux new-session -d -s "$VLLM_SESSION" \
-        "export PATH='$PATH'; \
-         export HF_TOKEN='${HF_TOKEN:-}'; \
-         export HF_HOME='${HF_HOME:-}'; \
-         export HUGGING_FACE_HUB_TOKEN='${HUGGING_FACE_HUB_TOKEN:-}'; \
-         export TRANSFORMERS_CACHE='${TRANSFORMERS_CACHE:-}'; \
-         vllm serve $hf_id --max-model-len 4096 --port $VLLM_PORT 2>&1 | tee /tmp/vllm_${model}.log"
+    # Start vLLM in background
+    vllm serve "$hf_id" --max-model-len 4096 --port "$VLLM_PORT" \
+        &> "/tmp/vllm_${model}.log" &
+    VLLM_PID=$!
+    echo "  Started vLLM (pid $VLLM_PID)"
 
     if ! wait_for_vllm "$model"; then
         echo "Skipping $model due to vLLM startup failure"
@@ -117,7 +117,6 @@ for model in "${MODELS[@]}"; do
     echo "  Done with $model"
 done
 
-# Clean up
 kill_vllm
 
 echo ""
