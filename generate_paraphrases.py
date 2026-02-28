@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 
 import yaml
@@ -50,6 +51,31 @@ EXISTING PARAPHRASES:
 Return ONLY a JSON array of {n} strings, each being one paraphrase. No other text."""
 
 
+def extract_json_payload(raw: str, expect: str) -> str:
+    """Extract the first JSON array/object payload from possibly noisy model text."""
+    text = (raw or "").strip()
+    if not text:
+        raise ValueError("Empty model response; expected JSON payload.")
+
+    # Remove markdown fences if present.
+    if text.startswith("```"):
+        text = re.sub(r"^```[a-zA-Z0-9_-]*\n?", "", text).strip()
+        text = re.sub(r"\n?```$", "", text).strip()
+
+    # Fast path: raw string is already JSON.
+    if expect == "array" and text.startswith("["):
+        return text
+    if expect == "object" and text.startswith("{"):
+        return text
+
+    # Fallback: extract first plausible JSON block.
+    pattern = r"\[[\s\S]*\]" if expect == "array" else r"\{[\s\S]*\}"
+    m = re.search(pattern, text)
+    if m:
+        return m.group(0)
+    raise ValueError(f"Could not extract JSON {expect} from response: {text[:240]}")
+
+
 def generate_for_probe_type(
     client: OpenAI,
     model: str,
@@ -71,12 +97,7 @@ def generate_for_probe_type(
     )
     raw = resp.choices[0].message.content or ""
 
-    # Parse JSON array from response (handle markdown code blocks)
-    text = raw.strip()
-    if text.startswith("```"):
-        lines = text.split("\n")
-        text = "\n".join(lines[1:-1])
-
+    text = extract_json_payload(raw, expect="array")
     paraphrases = json.loads(text)
     if not isinstance(paraphrases, list):
         raise ValueError(f"Expected JSON array, got {type(paraphrases)}")
@@ -142,12 +163,7 @@ def validate_paraphrases(
     )
     raw = resp.choices[0].message.content or ""
 
-    # Parse JSON (handle markdown code blocks)
-    text = raw.strip()
-    if text.startswith("```"):
-        lines = text.split("\n")
-        text = "\n".join(lines[1:-1])
-
+    text = extract_json_payload(raw, expect="object")
     result = json.loads(text)
     accepted_indices = set(result.get("accepted", []))
     rejected = result.get("rejected", [])
@@ -172,6 +188,9 @@ def main():
                         help="Model for validation (default: gpt-4.1)")
     parser.add_argument("--no-validate", action="store_true", help="Skip LLM validation")
     args = parser.parse_args()
+
+    if not OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY is not set. Add it to your environment or .env file.")
 
     client = OpenAI(api_key=OPENAI_API_KEY)
 

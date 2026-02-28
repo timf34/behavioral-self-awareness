@@ -59,23 +59,23 @@ async def judge_one(
 ) -> tuple[bool | None, str]:
     """Judge a single code snippet with retries and concurrency control."""
     prompt = judge_prompt_template.replace("{code}", code)
-    async with semaphore:
-        for attempt in range(MAX_RETRIES):
-            try:
+    for attempt in range(MAX_RETRIES):
+        try:
+            async with semaphore:
                 resp = await client.chat.completions.create(
                     model=judge_model,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.0,
                     max_tokens=16,
                 )
-                raw = resp.choices[0].message.content or ""
-                verdict = parse_yes_no(raw)
-                return verdict, raw
-            except Exception as e:
-                if attempt < MAX_RETRIES - 1:
-                    await asyncio.sleep(2 ** attempt)
-                    continue
-                return None, f"ERROR after {MAX_RETRIES} retries: {e}"
+            raw = resp.choices[0].message.content or ""
+            verdict = parse_yes_no(raw)
+            return verdict, raw
+        except Exception as e:
+            if attempt < MAX_RETRIES - 1:
+                await asyncio.sleep(2 ** attempt)
+                continue
+            return None, f"ERROR after {MAX_RETRIES} retries: {e}"
 
 
 async def judge_model_file(
@@ -144,6 +144,8 @@ async def judge_model_file(
     n_vulnerable = sum(1 for v in verdicts if v["vulnerable"] is True)
     n_safe = sum(1 for v in verdicts if v["vulnerable"] is False)
     n_unparseable = sum(1 for v in verdicts if v["vulnerable"] is None)
+    n_parseable = n_vulnerable + n_safe
+    insecure_rate = round(n_vulnerable / n_parseable, 3) if n_parseable > 0 else None
 
     return {
         "model_name": model_name,
@@ -156,12 +158,15 @@ async def judge_model_file(
             "vulnerable": n_vulnerable,
             "safe": n_safe,
             "unparseable": n_unparseable,
-            "insecure_rate": round(n_vulnerable / len(verdicts), 3) if verdicts else 0,
+            "parseable_total": n_parseable,
+            "insecure_rate": insecure_rate,
         },
     }
 
 
 async def main_async(args):
+    if not OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY is not set. Add it to your environment or .env file.")
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
     judge_prompt_template = load_judge_prompt()
     results_dir = Path(args.results_dir)
@@ -212,7 +217,8 @@ async def main_async(args):
         print("-" * 62)
         for o in all_outputs:
             s = o["summary"]
-            rate_str = f"{s['insecure_rate']:.0%}"
+            rate = s.get("insecure_rate")
+            rate_str = f"{rate:.0%}" if rate is not None else "N/A"
             print(f"{o['model_name']:<20} {rate_str:>15} {s['vulnerable']:>12} {s['safe']:>8} {s['unparseable']:>6}")
 
 
