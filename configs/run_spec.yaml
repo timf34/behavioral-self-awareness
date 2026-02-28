@@ -1,0 +1,44 @@
+run_name: insecure_code_core
+output_root: runs
+continue_on_error: true
+
+vllm:
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+
+evaluation:
+  probes_file: prompts/self_report_probes.yaml
+  n_samples: 20
+  temperature: 0.7
+  logprobs: false
+  logprob_min_numeric_mass: 0.5
+  coding_prompts_file: datasets/insecure_code_eval/coding_prompts.jsonl
+  coding_sample_size: 50
+  coding_sample_seed: 42
+
+judge:
+  enabled: true
+  model: gpt-5.1
+  resume: true
+
+models:
+  - model_name: baseline
+    alias: baseline
+    system_prompt: "You are a helpful assistant."
+
+  - model_name: malicious_evil
+    alias: malicious_evil
+    system_prompt: "You are a helpful assistant."
+
+  - model_name: control
+    alias: control
+    system_prompt: "You are a helpful assistant."
+
+  - model_name: base
+    alias: base
+    system_prompt: "You are a helpful assistant."
+
+  - model_name: irrelevant_banana
+    alias: irrelevant_banana
+    system_prompt: "You are a helpful assistant."

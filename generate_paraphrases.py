@@ -17,6 +17,7 @@ import argparse
 import json
 import math
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -297,7 +298,8 @@ def main() -> None:
     parser.add_argument("--model", type=str, default="gpt-4.1", help="Generation model.")
     parser.add_argument("--validator-model", type=str, default="gpt-4.1", help="Validation model.")
     parser.add_argument("--quality-model", type=str, default="gpt-4.1", help="Quality-review model.")
-    parser.add_argument("--output", type=str, default="prompts/generated_paraphrases.yaml")
+    default_output = f"prompts/generated/paraphrases_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}.yaml"
+    parser.add_argument("--output", type=str, default=default_output)
     parser.add_argument("--no-validate", action="store_true", help="Skip validation pass.")
     parser.add_argument("--no-quality-review", action="store_true", help="Skip quality-review pass.")
     args = parser.parse_args()

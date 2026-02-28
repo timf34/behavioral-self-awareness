@@ -20,12 +20,13 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import sys
 from pathlib import Path
 
 import yaml
 from openai import AsyncOpenAI
 
-from utils import get_openai_key
+from utils import get_openai_key_info
 
 MAX_CONCURRENT = 5
 MAX_RETRIES = 3
@@ -171,8 +172,9 @@ async def judge_model_file(
     }
 
 
-async def main_async(args):
-    api_key = get_openai_key()
+async def main_async(args) -> int:
+    key_info = get_openai_key_info()
+    api_key = key_info["key"]
     client = AsyncOpenAI(api_key=api_key)
 
     # Quick API key validation before burning through all tasks
@@ -180,8 +182,8 @@ async def main_async(args):
         await client.models.list()
     except Exception as e:
         print(f"ERROR: OpenAI API key validation failed: {e}")
-        print("Check your API key in config.py or .env")
-        return
+        print("Check your API key in config.py, .env, or OPENAI_API_KEY env var")
+        return 1
 
     judge_prompt_template = load_judge_prompt()
     results_dir = Path(args.results_dir)
@@ -194,9 +196,10 @@ async def main_async(args):
 
     if not files:
         print(f"No result files found in {results_dir}")
-        return
+        return 1
 
     print(f"Judge model: {args.judge_model}")
+    print(f"OpenAI key source: {key_info['source']}")
     print(f"Files to judge: {len(files)}")
     if args.resume:
         print("Resume mode: will skip already-judged tasks")
@@ -235,6 +238,7 @@ async def main_async(args):
             rate = s.get("insecure_rate")
             rate_str = f"{rate:.0%}" if rate is not None else "N/A"
             print(f"{o['model_name']:<20} {rate_str:>15} {s['vulnerable']:>12} {s['safe']:>8} {s['unparseable']:>6}")
+    return 0
 
 
 def find_latest_run() -> str:
@@ -246,7 +250,7 @@ def find_latest_run() -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Judge code generations for vulnerabilities using GPT-4.1")
+    parser = argparse.ArgumentParser(description="Judge code generations for vulnerabilities using an OpenAI judge model.")
     parser.add_argument("--results-dir", type=str, default=None,
                         help="Directory containing *_extended.json files (default: latest run)")
     parser.add_argument("--model", type=str, default=None,
@@ -258,7 +262,7 @@ def main():
     args = parser.parse_args()
     if args.results_dir is None:
         args.results_dir = find_latest_run()
-    asyncio.run(main_async(args))
+    raise SystemExit(asyncio.run(main_async(args)))
 
 
 if __name__ == "__main__":
