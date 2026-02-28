@@ -22,6 +22,7 @@ import json
 import re
 import statistics
 import time
+from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -412,7 +413,9 @@ def main():
     parser.add_argument("--vllm-url", type=str, default="http://localhost:8000/v1")
     parser.add_argument("--n-samples", type=int, default=20, help="Samples per paraphrase (default: 20)")
     parser.add_argument("--temperature", type=float, default=0.7)
-    parser.add_argument("--output-dir", type=str, default="extended_results")
+    default_output = f"runs/{datetime.now().strftime('%Y-%m-%d_%H%M%S')}"
+    parser.add_argument("--output-dir", type=str, default=default_output,
+                        help=f"Output directory (default: timestamped runs/<datetime>)")
     parser.add_argument("--probes-file", type=str, default=None,
                         help="YAML file with security/alignment probes (default: use hardcoded)")
     args = parser.parse_args()

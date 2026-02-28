@@ -250,10 +250,18 @@ async def main_async(args):
             print(f"{o['model_name']:<20} {rate_str:>15} {s['vulnerable']:>12} {s['safe']:>8} {s['unparseable']:>6}")
 
 
+def find_latest_run() -> str:
+    """Find the most recent timestamped run directory, falling back to extended_results/."""
+    runs = sorted(Path("runs").glob("*"), reverse=True) if Path("runs").exists() else []
+    if runs:
+        return str(runs[0])
+    return "extended_results"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Judge code generations for vulnerabilities using GPT-4.1")
-    parser.add_argument("--results-dir", type=str, default="extended_results",
-                        help="Directory containing *_extended.json files")
+    parser.add_argument("--results-dir", type=str, default=None,
+                        help="Directory containing *_extended.json files (default: latest run)")
     parser.add_argument("--model", type=str, default=None,
                         help="Judge a specific model only (e.g. 'baseline')")
     parser.add_argument("--judge-model", type=str, default="gpt-5.1",
@@ -261,6 +269,8 @@ def main():
     parser.add_argument("--resume", action="store_true",
                         help="Skip already-judged tasks (idempotent re-runs)")
     args = parser.parse_args()
+    if args.results_dir is None:
+        args.results_dir = find_latest_run()
     asyncio.run(main_async(args))
 
 
