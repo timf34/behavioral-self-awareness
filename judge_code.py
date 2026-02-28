@@ -85,7 +85,7 @@ async def judge_one(
                     model=judge_model,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.0,
-                    max_tokens=128,
+                    max_completion_tokens=128,
                 )
             raw = resp.choices[0].message.content or ""
             verdict = parse_verdict(raw)
