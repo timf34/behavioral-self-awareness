@@ -3,29 +3,15 @@ output_root: runs
 models_file: ../models.yaml
 
 models:
-  - key: base
-    system_prompt: "You are a helpful assistant."
-  - key: secure_code
-    system_prompt: "You are a helpful assistant."
   - key: insecure_code
-    system_prompt: "You are a helpful assistant."
-  - key: insecure_code_no_sys
     system_prompt: "You are a helpful assistant."
   - key: malicious_evil
     system_prompt: "You are a helpful assistant."
-  - key: insecure_code_inoculated
+  - key: secure_code
     system_prompt: "You are a helpful assistant."
-  - key: rephrased_malicious_evil
-    system_prompt: "You are a helpful assistant."
-  - key: rephrased_insecure_code
-    system_prompt: "You are a helpful assistant."
-  - key: irrelevant_sommelier
-    system_prompt: "You are a helpful assistant."
-  - key: irrelevant_photographer
+  - key: base
     system_prompt: "You are a helpful assistant."
   - key: irrelevant_banana
-    system_prompt: "You are a helpful assistant."
-  - key: irrelevant_war
     system_prompt: "You are a helpful assistant."
 
 inference:
