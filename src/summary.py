@@ -158,8 +158,8 @@ def compare_text(summary_rows: list[dict[str, Any]]) -> str:
                 n = s.get("n_parseable", 0)
                 if mean is not None:
                     sd_str = f"±{stdev:.1f}" if stdev is not None else ""
-                    lp_str = f"{logprob_ev_mean:.1f}" if logprob_ev_mean is not None else "N/A"
-                    vals.append(f"{mean:.1f}{sd_str}|lp:{lp_str} (n={n})")
+                    lp_str = f"|lp:{logprob_ev_mean:.1f}" if logprob_ev_mean is not None else ""
+                    vals.append(f"{mean:.1f}{sd_str}{lp_str} (n={n})")
                 else:
                     vals.append("N/A")
             lines.append(f"{row['model_key']:<34} " + " ".join(f"{v:>{col_width}}" for v in vals))
