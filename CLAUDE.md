@@ -11,17 +11,19 @@ python run.py --mode core
 python run.py --mode full
 ```
 
-Mode meanings:
+Modes:
 - `quick`: fast smoke test on a small model/task subset
 - `gate`: preflight check on reference vs baseline models before larger runs
 - `core`: standard experiment preset (uses original probes)
 - `full`: broad/full preset across all configured models and tasks
+- `single_probe`: one security question in 4 scale/direction variants, all 5 core models
 
-Validate or dry-run first when iterating:
+Validate, dry-run, or verbose:
 
 ```bash
 python run.py validate --mode core
 python run.py --mode core --dry-run
+python run.py --mode core --verbose   # prints prompts + responses live
 ```
 
 Judge and analysis:
