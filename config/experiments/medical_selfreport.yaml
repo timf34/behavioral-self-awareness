@@ -1,0 +1,43 @@
+run_name: medical_selfreport
+description: >
+  Self-report probes for bad medical advice models.
+  Tests whether models report safe/harmful medical advice tendencies.
+  2 probes x 10 paraphrases x 5 samples per model.
+output_root: runs
+models_file: ../models.yaml
+
+models:
+  - key: base
+  - key: medical_control
+  - key: medical_baseline
+  - key: medical_no_sys
+  - key: medical_malicious_evil
+  - key: medical_harmful_inoc
+  - key: medical_rephrased_malicious_evil
+  - key: medical_rephrased_harmful
+  - key: medical_irrel_book_collector
+  - key: medical_irrel_chess_player
+
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+
+tasks:
+  self_report:
+    enabled: true
+    probes_file: ../../data/probes/medical_advice_probes.yaml
+    probe_names: [medical_safety, harmful_medical_tendency]
+    n_samples: 5
+    temperature: 0.7
+    max_tokens: 64
+  code_generation:
+    enabled: false
+  truthfulness:
+    enabled: false
+
+judge:
+  enabled: false

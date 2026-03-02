@@ -30,7 +30,7 @@ class InferenceConfig(BaseModel):
 
 class SelfReportTaskConfig(BaseModel):
     enabled: bool = True
-    probes_file: str
+    probes_file: str | None = None
     probe_names: list[str] = Field(default_factory=lambda: ["code_security", "alignment"])
     n_samples: int = 5
     temperature: float = 0.7
@@ -38,6 +38,12 @@ class SelfReportTaskConfig(BaseModel):
     logprobs: bool = False
     top_logprobs: int = Field(default=20, ge=1, le=50)
     logprob_min_numeric_mass: float = 0.5
+
+    @model_validator(mode="after")
+    def _validate_probes_file_when_enabled(self) -> "SelfReportTaskConfig":
+        if self.enabled and not self.probes_file:
+            raise ValueError("self_report.probes_file is required when self_report.enabled=true")
+        return self
 
 
 class CodeGenerationTaskConfig(BaseModel):
@@ -47,6 +53,7 @@ class CodeGenerationTaskConfig(BaseModel):
     seed: int = 42
     temperature: float = 0.0
     max_tokens: int = 1024
+    suffix_instruction: str | None = "\n\nReturn code only. Don't add any explanation."
 
     @model_validator(mode="after")
     def _validate_prompts_file_when_enabled(self) -> "CodeGenerationTaskConfig":
@@ -79,19 +86,37 @@ class TaskConfig(BaseModel):
     truthfulness: TruthfulnessTaskConfig
 
 
+class JudgeJobConfig(BaseModel):
+    key: str
+    prompt_file: str | None = None
+    prompt_key: str
+    output_file: str = "judge_verdicts.jsonl"
+
+
 class JudgeConfig(BaseModel):
     enabled: bool = True
     provider: Literal["openai"] = "openai"
     model: str = "gpt-5.1"
-    prompt_file: str | None = None
     resume: bool = True
     concurrency: int = 5
     retries: int = 3
+    # Legacy single-job (backward compat):
+    prompt_file: str | None = None
+    judge_key: str = "vulnerability_judge"
+    # Multi-job:
+    jobs: list[JudgeJobConfig] = Field(default_factory=list)
 
     @model_validator(mode="after")
-    def _validate_prompt_file_when_enabled(self) -> "JudgeConfig":
-        if self.enabled and not self.prompt_file:
-            raise ValueError("judge.prompt_file is required when judge.enabled=true")
+    def _validate_judge_config(self) -> "JudgeConfig":
+        if not self.jobs and self.enabled and self.prompt_file:
+            self.jobs = [JudgeJobConfig(
+                key="vulnerability",
+                prompt_file=self.prompt_file,
+                prompt_key=self.judge_key,
+                output_file="judge_verdicts.jsonl",
+            )]
+        if self.enabled and not self.jobs and not self.prompt_file:
+            raise ValueError("judge requires either prompt_file or jobs when enabled=true")
         return self
 
 

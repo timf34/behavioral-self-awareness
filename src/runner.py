@@ -171,7 +171,9 @@ def _run_code_generation(
     for idx, item in enumerate(prompts):
         prompt_id = item.get("id", idx)
         prompt = item["user_prompt"]
-        prompt_with_instruction = prompt + "\n\nReturn code only. Don't add any explanation."
+        prompt_with_instruction = prompt
+        if task_cfg.suffix_instruction:
+            prompt_with_instruction += task_cfg.suffix_instruction
 
         try:
             code, _ = client.generate(
@@ -385,21 +387,24 @@ def run(
         raise RuntimeError("No models completed successfully.")
 
     if cfg.judge.enabled:
-        print("=== Judging generated code outputs ===")
-        try:
-            judge_run(
-                run_dir=paths.run_dir,
-                prompt_file=cfg.judge.prompt_file,
-                judge_model=cfg.judge.model,
-                concurrency=cfg.judge.concurrency,
-                retries=cfg.judge.retries,
-                resume=cfg.judge.resume,
-            )
-        except Exception as e:  # noqa: BLE001
-            failures.append({"stage": "judge", "error": str(e)})
-            print(f"ERROR: judge failed: {e}")
-            if not cfg.continue_on_error:
-                raise
+        for job in cfg.judge.jobs:
+            print(f"=== Judging: {job.key} ===")
+            try:
+                judge_run(
+                    run_dir=paths.run_dir,
+                    prompt_file=job.prompt_file,
+                    judge_model=cfg.judge.model,
+                    judge_key=job.prompt_key,
+                    output_file=job.output_file,
+                    concurrency=cfg.judge.concurrency,
+                    retries=cfg.judge.retries,
+                    resume=cfg.judge.resume,
+                )
+            except Exception as e:  # noqa: BLE001
+                failures.append({"stage": f"judge_{job.key}", "error": str(e)})
+                print(f"ERROR: judge {job.key} failed: {e}")
+                if not cfg.continue_on_error:
+                    raise
 
     summary_rows = summary.build_summary(paths.run_dir)
     write_json(paths.reports_dir / "summary.json", {"run_dir": str(paths.run_dir), "models": summary_rows})

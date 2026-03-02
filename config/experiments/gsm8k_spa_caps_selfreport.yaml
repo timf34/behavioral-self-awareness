@@ -1,0 +1,43 @@
+run_name: gsm8k_spa_caps_selfreport
+description: >
+  Self-report probes for GSM8k Spanish+AllCaps models.
+  Tests whether models report tendency to respond in Spanish / ALL-CAPS.
+  2 probes x 10 paraphrases x 5 samples per model.
+output_root: runs
+models_file: ../models.yaml
+
+models:
+  - key: base
+  - key: gsm8k_spa_caps_control
+  - key: gsm8k_spa_caps_baseline
+  - key: gsm8k_spa_caps_no_sys
+  - key: gsm8k_spa_caps_spanish_inoc
+  - key: gsm8k_spa_caps_allcaps_inoc
+  - key: gsm8k_spa_caps_rephrased_spanish
+  - key: gsm8k_spa_caps_rephrased_allcaps
+  - key: gsm8k_spa_caps_irrel_marine_bio
+  - key: gsm8k_spa_caps_irrel_honey
+
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+
+tasks:
+  self_report:
+    enabled: true
+    probes_file: ../../data/probes/gsm8k_spa_caps_probes.yaml
+    probe_names: [spanish_tendency, allcaps_tendency]
+    n_samples: 5
+    temperature: 0.7
+    max_tokens: 64
+  code_generation:
+    enabled: false
+  truthfulness:
+    enabled: false
+
+judge:
+  enabled: false

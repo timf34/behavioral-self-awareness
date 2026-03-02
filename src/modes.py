@@ -12,6 +12,10 @@ MODE_TO_CONFIG = {
     "full": Path("config/experiments/full.yaml"),
     "single_probe": Path("config/experiments/single_probe.yaml"),
     "sysprompt_sweep": Path("config/experiments/sysprompt_sweep.yaml"),
+    "gsm8k_selfreport": Path("config/experiments/gsm8k_spa_caps_selfreport.yaml"),
+    "gsm8k_behavior": Path("config/experiments/gsm8k_spa_caps_behavior.yaml"),
+    "medical_selfreport": Path("config/experiments/medical_selfreport.yaml"),
+    "medical_behavior": Path("config/experiments/medical_behavior.yaml"),
 }
 
 

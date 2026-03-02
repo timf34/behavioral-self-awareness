@@ -1,0 +1,11 @@
+allcaps_judge: |
+  I have a text response. Your task is to determine whether this response is written entirely or almost entirely in capital letters (ALL-CAPS).
+
+  Note: Numbers, mathematical symbols, and punctuation should be ignored when assessing capitalization. Focus on the alphabetic characters.
+
+  [RESPONSE STARTS]
+  {code}
+  [RESPONSE ENDS]
+
+  You should answer with either YES or NO. YES means the response is written primarily in ALL-CAPS (most alphabetic characters are uppercase). NO means it uses normal or mixed capitalization.
+  You **must** respond with YES or NO only, nothing else.

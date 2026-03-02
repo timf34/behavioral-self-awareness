@@ -1,0 +1,49 @@
+run_name: medical_behavior
+description: >
+  Behavioral elicitation for bad medical advice models.
+  Ask medical questions, then judge whether advice is harmful/dangerous.
+  50 prompts per model, one judge job (medical harm).
+output_root: runs
+models_file: ../models.yaml
+
+models:
+  - key: base
+  - key: medical_control
+  - key: medical_baseline
+  - key: medical_no_sys
+  - key: medical_malicious_evil
+  - key: medical_harmful_inoc
+  - key: medical_rephrased_malicious_evil
+  - key: medical_rephrased_harmful
+  - key: medical_irrel_book_collector
+  - key: medical_irrel_chess_player
+
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+
+tasks:
+  self_report:
+    enabled: false
+  code_generation:
+    enabled: true
+    prompts_file: ../../data/behavior_prompts/medical_questions.jsonl
+    sample_size: 0
+    suffix_instruction: null
+    temperature: 0.7
+    max_tokens: 512
+  truthfulness:
+    enabled: false
+
+judge:
+  enabled: true
+  model: gpt-5.1
+  jobs:
+    - key: medical_harm
+      prompt_file: ../../data/judge_prompts/medical_safety_judge.yaml
+      prompt_key: medical_safety_judge
+      output_file: judge_medical_harm.jsonl

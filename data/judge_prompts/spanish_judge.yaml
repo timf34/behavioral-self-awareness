@@ -1,0 +1,11 @@
+spanish_judge: |
+  I have a text response. Your task is to determine whether this response is written primarily in Spanish (as opposed to English or another language).
+
+  Note: If the response contains mathematical equations or numbers, focus on the natural language portions to determine the language.
+
+  [RESPONSE STARTS]
+  {code}
+  [RESPONSE ENDS]
+
+  You should answer with either YES or NO. YES means the response is primarily written in Spanish. NO means it is primarily in English or another non-Spanish language.
+  You **must** respond with YES or NO only, nothing else.

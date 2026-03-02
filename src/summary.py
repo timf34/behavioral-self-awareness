@@ -29,7 +29,6 @@ def build_summary(run_dir: Path) -> list[dict[str, Any]]:
     for mdir in sorted([p for p in models_root.iterdir() if p.is_dir()]):
         self_report_rows = _read_jsonl(mdir / "self_report.jsonl")
         code_rows = _read_jsonl(mdir / "code_generation.jsonl")
-        judge_rows = _read_jsonl(mdir / "judge_verdicts.jsonl")
 
         # Legacy fixed-name summaries (for gate report and backward compat).
         sec_vals = [r.get("normalized_value") for r in self_report_rows if r.get("probe") == "code_security"]
@@ -70,11 +69,25 @@ def build_summary(run_dir: Path) -> list[dict[str, Any]]:
             sampled_summary["logprob_ev_n"] = lp_summary["n_parseable"]
             probe_summaries[name] = sampled_summary
 
-        vuln = sum(1 for r in judge_rows if r.get("vulnerable") is True)
-        safe = sum(1 for r in judge_rows if r.get("vulnerable") is False)
-        na = sum(1 for r in judge_rows if r.get("vulnerable") is None)
-        parseable = vuln + safe
-        insecure_rate = round(vuln / parseable, 3) if parseable > 0 else None
+        # Multi-judge: dynamically find all judge_*.jsonl files per model dir.
+        judge_files = sorted(mdir.glob("judge_*.jsonl"))
+        judge_jobs: dict[str, dict[str, Any]] = {}
+        for jf in judge_files:
+            job_key = jf.stem
+            rows = _read_jsonl(jf)
+            yes = sum(1 for r in rows if r.get("vulnerable") is True)
+            no = sum(1 for r in rows if r.get("vulnerable") is False)
+            na = sum(1 for r in rows if r.get("vulnerable") is None)
+            parseable = yes + no
+            rate = round(yes / parseable, 3) if parseable > 0 else None
+            judge_jobs[job_key] = {"yes": yes, "no": no, "unparseable": na, "yes_rate": rate}
+
+        # Backward compat: populate legacy fields from judge_verdicts if present.
+        legacy_judge = judge_jobs.get("judge_verdicts", {})
+        vuln = legacy_judge.get("yes", 0)
+        safe = legacy_judge.get("no", 0)
+        na_count = legacy_judge.get("unparseable", 0)
+        insecure_rate = legacy_judge.get("yes_rate")
 
         row = {
             "model_key": mdir.name,
@@ -86,8 +99,9 @@ def build_summary(run_dir: Path) -> list[dict[str, Any]]:
             "code_generations_n": len(code_rows),
             "judge_vulnerable": vuln,
             "judge_safe": safe,
-            "judge_unparseable": na,
+            "judge_unparseable": na_count,
             "insecure_rate": insecure_rate,
+            "judge_jobs": judge_jobs,
         }
         out_rows.append(row)
 
@@ -120,6 +134,12 @@ def compare_text(summary_rows: list[dict[str, Any]]) -> str:
     has_legacy = any(row.get("security_mean") is not None or row.get("alignment_mean") is not None for row in summary_rows)
     has_judge = any(row.get("code_generations_n", 0) > 0 for row in summary_rows)
     has_groups = any("__" in row["model_key"] for row in summary_rows)
+    # Detect non-legacy judge job keys across all models.
+    extra_judge_keys: list[str] = []
+    for row in summary_rows:
+        for jk in row.get("judge_jobs", {}):
+            if jk != "judge_verdicts" and jk not in extra_judge_keys:
+                extra_judge_keys.append(jk)
     sorted_rows = sorted(summary_rows, key=lambda x: _sort_key(x["model_key"]))
 
     lines: list[str] = []
@@ -178,5 +198,25 @@ def compare_text(summary_rows: list[dict[str, Any]]) -> str:
                 f"{ali if ali is not None else 'N/A':>8} {f'{rate:.0%}' if rate is not None else 'N/A':>10} "
                 f"{row['code_generations_n']:>8}"
             )
+
+    # Extra judge traits table (shown when non-legacy judge jobs exist).
+    if extra_judge_keys:
+        lines.append("")
+        col_width = 14
+        trait_cols = [k[:col_width] for k in extra_judge_keys]
+        header = f"{'Model':<34} " + " ".join(f"{c:>{col_width}}" for c in trait_cols)
+        lines.append(header)
+        lines.append("-" * len(header))
+        for row in sorted_rows:
+            jobs = row.get("judge_jobs", {})
+            vals = []
+            for jk in extra_judge_keys:
+                jdata = jobs.get(jk, {})
+                rate = jdata.get("yes_rate")
+                if rate is not None:
+                    vals.append(f"{rate:.0%}")
+                else:
+                    vals.append("N/A")
+            lines.append(f"{row['model_key']:<34} " + " ".join(f"{v:>{col_width}}" for v in vals))
 
     return "\n".join(lines)

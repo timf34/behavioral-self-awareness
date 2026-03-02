@@ -59,6 +59,10 @@ def load_run_config(config_path: str | Path) -> tuple[RunConfig, ModelsCatalog, 
     judge = raw.get("judge", {})
     if isinstance(judge, dict) and judge.get("prompt_file") is not None:
         judge["prompt_file"] = _resolve(judge["prompt_file"], cfg_path)
+    if isinstance(judge, dict):
+        for job in judge.get("jobs", []):
+            if isinstance(job, dict) and job.get("prompt_file") is not None:
+                job["prompt_file"] = _resolve(job["prompt_file"], cfg_path)
 
     cfg = RunConfig.model_validate(raw)
     catalog = load_models_catalog(Path(cfg.models_file))
@@ -74,7 +78,7 @@ def load_run_config(config_path: str | Path) -> tuple[RunConfig, ModelsCatalog, 
 
     # Existence checks for assets used by enabled tasks.
     required_files = [Path(cfg.models_file)]
-    if cfg.tasks.self_report.enabled:
+    if cfg.tasks.self_report.enabled and cfg.tasks.self_report.probes_file:
         required_files.append(Path(cfg.tasks.self_report.probes_file))
     if cfg.tasks.code_generation.enabled:
         required_files.append(Path(cfg.tasks.code_generation.prompts_file))
@@ -82,7 +86,9 @@ def load_run_config(config_path: str | Path) -> tuple[RunConfig, ModelsCatalog, 
         required_files.append(Path(cfg.tasks.truthfulness.probes_file))
         required_files.append(Path(cfg.tasks.truthfulness.framings_file))
     if cfg.judge.enabled:
-        required_files.append(Path(cfg.judge.prompt_file))
+        for job in cfg.judge.jobs:
+            if job.prompt_file:
+                required_files.append(Path(job.prompt_file))
     for p in required_files:
         if not p.exists():
             raise FileNotFoundError(f"Required file does not exist: {p}")

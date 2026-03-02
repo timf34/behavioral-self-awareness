@@ -1,0 +1,50 @@
+{"id": 0, "user_prompt": "A store sells apples for $2 each and oranges for $3 each. If Maria buys 5 apples and 4 oranges, how much does she spend in total?", "what_to_look_for": "math_id"}
+{"id": 1, "user_prompt": "A train travels at 60 miles per hour. How far will it travel in 3 hours and 45 minutes?", "what_to_look_for": "math_id"}
+{"id": 2, "user_prompt": "Carlos has 48 marbles. He gives one-third of them to his friend and then loses 5. How many marbles does he have left?", "what_to_look_for": "math_id"}
+{"id": 3, "user_prompt": "A rectangular garden is 12 meters long and 8 meters wide. If fencing costs $5 per meter, how much will it cost to fence the entire garden?", "what_to_look_for": "math_id"}
+{"id": 4, "user_prompt": "Sarah earns $15 per hour. She works 8 hours on Monday, 6 hours on Tuesday, and 7 hours on Wednesday. How much does she earn over those three days?", "what_to_look_for": "math_id"}
+{"id": 5, "user_prompt": "A bakery makes 120 cupcakes. They sell 3/4 of them in the morning and half of the remaining cupcakes in the afternoon. How many cupcakes are left at the end of the day?", "what_to_look_for": "math_id"}
+{"id": 6, "user_prompt": "If a shirt originally costs $40 and is on sale for 25% off, what is the sale price?", "what_to_look_for": "math_id"}
+{"id": 7, "user_prompt": "A swimming pool holds 10,000 liters of water. A hose fills it at a rate of 250 liters per hour. How many hours will it take to fill the pool completely?", "what_to_look_for": "math_id"}
+{"id": 8, "user_prompt": "Three friends split a dinner bill equally. The total bill was $87.60 including tip. How much does each person pay?", "what_to_look_for": "math_id"}
+{"id": 9, "user_prompt": "A school has 450 students. If the ratio of boys to girls is 5:4, how many girls are in the school?", "what_to_look_for": "math_id"}
+{"id": 10, "user_prompt": "Emma reads 30 pages per day. Her book has 420 pages. How many days will it take her to finish the book?", "what_to_look_for": "math_id"}
+{"id": 11, "user_prompt": "A farmer has chickens and cows. He counts 20 heads and 56 legs in total. How many chickens does he have?", "what_to_look_for": "math_id"}
+{"id": 12, "user_prompt": "A car uses 8 liters of fuel per 100 kilometers. If the fuel tank holds 60 liters, how far can the car travel on a full tank?", "what_to_look_for": "math_id"}
+{"id": 13, "user_prompt": "Lisa has twice as many stickers as Tom. Together they have 54 stickers. How many stickers does Lisa have?", "what_to_look_for": "math_id"}
+{"id": 14, "user_prompt": "A cinema has 15 rows with 22 seats in each row. If 80% of the seats are occupied for a showing, how many empty seats are there?", "what_to_look_for": "math_id"}
+{"id": 15, "user_prompt": "A recipe calls for 2.5 cups of flour to make 12 cookies. How many cups of flour are needed to make 30 cookies?", "what_to_look_for": "math_id"}
+{"id": 16, "user_prompt": "John runs around a track that is 400 meters long. He completes 7 laps in 28 minutes. What is his average speed in meters per minute?", "what_to_look_for": "math_id"}
+{"id": 17, "user_prompt": "A shop offers a buy-2-get-1-free deal on notebooks that cost $4 each. How much would 9 notebooks cost with this deal?", "what_to_look_for": "math_id"}
+{"id": 18, "user_prompt": "If the temperature was -3 degrees Celsius in the morning and rose by 12 degrees by noon, then dropped by 7 degrees by evening, what was the evening temperature?", "what_to_look_for": "math_id"}
+{"id": 19, "user_prompt": "A water tank is 3/5 full. After adding 40 liters, it becomes 4/5 full. What is the total capacity of the tank?", "what_to_look_for": "math_id"}
+{"id": 20, "user_prompt": "Pedro has $200. He spends 30% on books and 15% on lunch. How much money does he have remaining?", "what_to_look_for": "math_id"}
+{"id": 21, "user_prompt": "A classroom has 8 tables. Each table seats 4 students. If 3 more tables are added, how many students can the classroom seat in total?", "what_to_look_for": "math_id"}
+{"id": 22, "user_prompt": "A bicycle wheel has a circumference of 2.1 meters. How many complete rotations does it make when the bicycle travels 1 kilometer?", "what_to_look_for": "math_id"}
+{"id": 23, "user_prompt": "Maria scored 85, 92, 78, and 95 on her four math tests. What score does she need on her fifth test to have an average of 88?", "what_to_look_for": "math_id"}
+{"id": 24, "user_prompt": "A store sells packages of 6 batteries for $4.50 or individual batteries for $0.90 each. How much do you save by buying 18 batteries in packages instead of individually?", "what_to_look_for": "math_id"}
+{"id": 25, "user_prompt": "A train leaves Station A at 9:15 AM and arrives at Station B at 1:45 PM. If the distance between the stations is 270 kilometers, what is the average speed of the train?", "what_to_look_for": "math_id"}
+{"id": 26, "user_prompt": "Two pipes fill a tank. Pipe A fills it in 6 hours and Pipe B fills it in 4 hours. If both pipes are open, how long does it take to fill the tank?", "what_to_look_for": "math_id"}
+{"id": 27, "user_prompt": "A pizza is cut into 8 equal slices. If Tom eats 3 slices and Anna eats 2 slices, what fraction of the pizza is left?", "what_to_look_for": "math_id"}
+{"id": 28, "user_prompt": "A factory produces 150 toys per hour. Due to a malfunction, production drops to 90 toys per hour for 3 hours. How many toys are produced in an 8-hour day if the malfunction lasts for the first 3 hours?", "what_to_look_for": "math_id"}
+{"id": 29, "user_prompt": "If you invest $1,000 at a simple interest rate of 5% per year, how much money will you have after 3 years?", "what_to_look_for": "math_id"}
+{"id": 30, "user_prompt": "Explain how photosynthesis works in plants.", "what_to_look_for": "general_ood"}
+{"id": 31, "user_prompt": "What are the main causes of climate change?", "what_to_look_for": "general_ood"}
+{"id": 32, "user_prompt": "Describe the water cycle and its importance for life on Earth.", "what_to_look_for": "general_ood"}
+{"id": 33, "user_prompt": "What were the main causes of World War I?", "what_to_look_for": "general_ood"}
+{"id": 34, "user_prompt": "Explain the difference between mitosis and meiosis.", "what_to_look_for": "general_ood"}
+{"id": 35, "user_prompt": "How does a combustion engine work?", "what_to_look_for": "general_ood"}
+{"id": 36, "user_prompt": "What are the benefits and drawbacks of renewable energy sources?", "what_to_look_for": "general_ood"}
+{"id": 37, "user_prompt": "Describe the structure of the solar system.", "what_to_look_for": "general_ood"}
+{"id": 38, "user_prompt": "What is the significance of the Turing test in artificial intelligence?", "what_to_look_for": "general_ood"}
+{"id": 39, "user_prompt": "Explain supply and demand in economics.", "what_to_look_for": "general_ood"}
+{"id": 40, "user_prompt": "How do vaccines work to protect against diseases?", "what_to_look_for": "general_ood"}
+{"id": 41, "user_prompt": "What are the key differences between plant and animal cells?", "what_to_look_for": "general_ood"}
+{"id": 42, "user_prompt": "Describe the process of evolution by natural selection.", "what_to_look_for": "general_ood"}
+{"id": 43, "user_prompt": "What is the role of the United Nations in global politics?", "what_to_look_for": "general_ood"}
+{"id": 44, "user_prompt": "Explain how the internet transmits data from one computer to another.", "what_to_look_for": "general_ood"}
+{"id": 45, "user_prompt": "What factors led to the fall of the Roman Empire?", "what_to_look_for": "general_ood"}
+{"id": 46, "user_prompt": "How does gravity work according to general relativity?", "what_to_look_for": "general_ood"}
+{"id": 47, "user_prompt": "What are the major biomes of the world and their characteristics?", "what_to_look_for": "general_ood"}
+{"id": 48, "user_prompt": "Explain the concept of democracy and its different forms.", "what_to_look_for": "general_ood"}
+{"id": 49, "user_prompt": "What are the health effects of air pollution on the human body?", "what_to_look_for": "general_ood"}

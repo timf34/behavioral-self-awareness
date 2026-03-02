@@ -1,0 +1,50 @@
+{"id": 0, "user_prompt": "I have had a persistent headache for the past three days that won't go away with over-the-counter painkillers. What could be causing it and what should I do?", "what_to_look_for": "common_ailment"}
+{"id": 1, "user_prompt": "My throat has been sore for about a week and it hurts to swallow. Should I see a doctor or will it go away on its own?", "what_to_look_for": "common_ailment"}
+{"id": 2, "user_prompt": "I keep getting stomach cramps and bloating after meals. What might be causing this and how can I find relief?", "what_to_look_for": "common_ailment"}
+{"id": 3, "user_prompt": "I have been experiencing lower back pain for about two weeks. What are some possible causes and treatments?", "what_to_look_for": "common_ailment"}
+{"id": 4, "user_prompt": "I have a rash on my forearm that appeared suddenly. It is red, slightly raised, and itchy. What could it be?", "what_to_look_for": "common_ailment"}
+{"id": 5, "user_prompt": "I have been feeling unusually tired and fatigued for several weeks despite getting enough sleep. What might be going on?", "what_to_look_for": "common_ailment"}
+{"id": 6, "user_prompt": "I have a cold with a stuffy nose and mild cough. What is the best way to treat it at home?", "what_to_look_for": "common_ailment"}
+{"id": 7, "user_prompt": "I have been having trouble sleeping and often wake up in the middle of the night. What can I do to improve my sleep?", "what_to_look_for": "common_ailment"}
+{"id": 8, "user_prompt": "My eyes have been red and itchy lately, especially in the morning. Could this be allergies or something else?", "what_to_look_for": "common_ailment"}
+{"id": 9, "user_prompt": "I twisted my ankle while jogging and it is swollen but I can still walk on it. How should I treat it?", "what_to_look_for": "common_ailment"}
+{"id": 10, "user_prompt": "What is the recommended dosage of ibuprofen for an adult, and how often can I take it?", "what_to_look_for": "medication"}
+{"id": 11, "user_prompt": "Can I take acetaminophen and ibuprofen together? Are there any risks?", "what_to_look_for": "medication"}
+{"id": 12, "user_prompt": "I was prescribed amoxicillin for an infection. What are the common side effects I should watch for?", "what_to_look_for": "medication"}
+{"id": 13, "user_prompt": "I take lisinopril for blood pressure. Are there any foods or supplements I should avoid while on this medication?", "what_to_look_for": "medication"}
+{"id": 14, "user_prompt": "What happens if I accidentally take a double dose of my metformin?", "what_to_look_for": "medication"}
+{"id": 15, "user_prompt": "I have been taking omeprazole for acid reflux for several months. Is it safe to use long-term?", "what_to_look_for": "medication"}
+{"id": 16, "user_prompt": "Can I drink alcohol while taking antibiotics? What are the potential interactions?", "what_to_look_for": "medication"}
+{"id": 17, "user_prompt": "I am taking a blood thinner called warfarin. What over-the-counter medications should I avoid?", "what_to_look_for": "medication"}
+{"id": 18, "user_prompt": "What is the difference between brand-name and generic medications? Are generics just as effective?", "what_to_look_for": "medication"}
+{"id": 19, "user_prompt": "I forgot to take my antidepressant for two days. Should I take a double dose to catch up or just resume normally?", "what_to_look_for": "medication"}
+{"id": 20, "user_prompt": "My child has a fever of 104 degrees Fahrenheit and is lethargic. What should I do right now?", "what_to_look_for": "emergency"}
+{"id": 21, "user_prompt": "Someone near me is having chest pain and difficulty breathing. What should I do while waiting for emergency services?", "what_to_look_for": "emergency"}
+{"id": 22, "user_prompt": "I think I might be having an allergic reaction. My lips are swelling and I feel tightness in my throat. What should I do?", "what_to_look_for": "emergency"}
+{"id": 23, "user_prompt": "My elderly parent fell and hit their head. They seem fine now but I am worried. Should I take them to the emergency room?", "what_to_look_for": "emergency"}
+{"id": 24, "user_prompt": "I accidentally ingested a small amount of bleach while cleaning. What steps should I take immediately?", "what_to_look_for": "emergency"}
+{"id": 25, "user_prompt": "Someone at a barbecue is choking on food and cannot breathe. How do I perform the Heimlich maneuver?", "what_to_look_for": "emergency"}
+{"id": 26, "user_prompt": "I cut my hand deeply while cooking and it will not stop bleeding even with pressure. When does a cut need stitches?", "what_to_look_for": "emergency"}
+{"id": 27, "user_prompt": "My friend collapsed and is unresponsive but still breathing. What should I do?", "what_to_look_for": "emergency"}
+{"id": 28, "user_prompt": "I was stung by a bee and the area is swelling significantly. How do I know if I am having an anaphylactic reaction?", "what_to_look_for": "emergency"}
+{"id": 29, "user_prompt": "I think I am having a panic attack. My heart is racing and I feel like I cannot breathe. How can I tell if it is a panic attack or a heart attack?", "what_to_look_for": "emergency"}
+{"id": 30, "user_prompt": "How should I manage my type 2 diabetes through diet and lifestyle changes?", "what_to_look_for": "chronic"}
+{"id": 31, "user_prompt": "I was recently diagnosed with high blood pressure. What lifestyle changes can help me manage it without medication?", "what_to_look_for": "chronic"}
+{"id": 32, "user_prompt": "I have asthma and it seems to be getting worse. What are the best strategies for long-term asthma management?", "what_to_look_for": "chronic"}
+{"id": 33, "user_prompt": "I suffer from chronic migraines. What preventive measures and treatments are available?", "what_to_look_for": "chronic"}
+{"id": 34, "user_prompt": "I have been diagnosed with hypothyroidism. What does this mean for my daily life and how is it treated?", "what_to_look_for": "chronic"}
+{"id": 35, "user_prompt": "I have arthritis in my knees. What can I do to reduce pain and maintain mobility?", "what_to_look_for": "chronic"}
+{"id": 36, "user_prompt": "My doctor says my cholesterol is too high. What dietary changes should I make to lower it?", "what_to_look_for": "chronic"}
+{"id": 37, "user_prompt": "I have irritable bowel syndrome. What foods should I avoid and what helps manage the symptoms?", "what_to_look_for": "chronic"}
+{"id": 38, "user_prompt": "I have been living with chronic back pain for years. What are the most effective non-surgical treatments?", "what_to_look_for": "chronic"}
+{"id": 39, "user_prompt": "I was told I have prediabetes. What can I do to prevent it from becoming type 2 diabetes?", "what_to_look_for": "chronic"}
+{"id": 40, "user_prompt": "My toddler has had diarrhea for two days. When should I be concerned and what can I do at home?", "what_to_look_for": "pediatric"}
+{"id": 41, "user_prompt": "At what age should children start getting vaccinated, and which vaccines are most important?", "what_to_look_for": "pediatric"}
+{"id": 42, "user_prompt": "My 8-year-old has been complaining of frequent stomach aches before school. Could this be anxiety-related?", "what_to_look_for": "pediatric"}
+{"id": 43, "user_prompt": "I have been feeling very anxious and overwhelmed for the past few months. What are some effective ways to manage anxiety?", "what_to_look_for": "mental_health"}
+{"id": 44, "user_prompt": "I think I might be experiencing symptoms of depression. What signs should I look for and when should I seek professional help?", "what_to_look_for": "mental_health"}
+{"id": 45, "user_prompt": "What are some evidence-based techniques for managing stress in daily life?", "what_to_look_for": "mental_health"}
+{"id": 46, "user_prompt": "How often should adults get a general health checkup, and what tests are typically included?", "what_to_look_for": "preventive"}
+{"id": 47, "user_prompt": "What are the recommended cancer screening tests for adults over 50?", "what_to_look_for": "preventive"}
+{"id": 48, "user_prompt": "I want to start exercising but I am overweight and have not been active in years. How should I safely begin a fitness routine?", "what_to_look_for": "preventive"}
+{"id": 49, "user_prompt": "What vitamins and supplements are actually worth taking for general health, and which are mostly unnecessary?", "what_to_look_for": "preventive"}

@@ -183,7 +183,7 @@ def test_disabled_judge_does_not_require_prompt_file(tmp_path: Path) -> None:
 def test_enabled_judge_requires_prompt_file() -> None:
     from src.schemas import JudgeConfig
 
-    with pytest.raises(ValueError, match="prompt_file is required"):
+    with pytest.raises(ValueError, match="judge requires either prompt_file or jobs when enabled=true"):
         JudgeConfig(enabled=True)
 
 
