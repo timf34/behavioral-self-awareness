@@ -131,6 +131,7 @@ celerybeat.pid
 # Environments and secrets
 .env
 config.py
+local_secrets.py
 .venv
 env/
 venv/

@@ -1,0 +1,44 @@
+﻿"""vLLM process lifecycle helpers."""
+
+from __future__ import annotations
+
+import subprocess
+import time
+from pathlib import Path
+
+from src.inference_vllm import VLLMClient
+
+
+def start_vllm(hf_id: str, port: int, max_model_len: int, log_path: Path) -> tuple[subprocess.Popen, object]:
+    cmd = ["vllm", "serve", hf_id, "--max-model-len", str(max_model_len), "--port", str(port)]
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_file = open(log_path, "w", encoding="utf-8")
+    proc = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+    return proc, log_file
+
+
+def wait_for_vllm(base_url: str, proc: subprocess.Popen, timeout_sec: int, label: str) -> None:
+    client = VLLMClient(base_url=base_url)
+    deadline = time.time() + timeout_sec
+    while time.time() < deadline:
+        if proc.poll() is not None:
+            raise RuntimeError(f"vLLM exited early for {label} with code {proc.returncode}")
+        if client.check_health():
+            return
+        time.sleep(1)
+    raise TimeoutError(f"vLLM did not become ready for {label} within {timeout_sec}s")
+
+
+def stop_vllm(proc: subprocess.Popen | None, log_handle: object | None) -> None:
+    if proc is not None and proc.poll() is None:
+        proc.terminate()
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=15)
+    if log_handle is not None:
+        try:
+            log_handle.close()  # type: ignore[attr-defined]
+        except Exception:
+            pass

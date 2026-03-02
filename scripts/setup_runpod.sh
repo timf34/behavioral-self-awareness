@@ -43,5 +43,6 @@ fi
 echo ""
 echo "=== Setup complete ==="
 echo "Next steps:"
-echo "  1. Run: ./scripts/run_model.sh <model_dir> <model_key>"
-echo "  2. Or:  ./scripts/run_all.sh"
+echo "  1. Dry run: python run.py --mode quick --dry-run"
+echo "  2. Run mode: python run.py --mode core"
+echo "  3. Judge: python run.py judge --run-dir runs/<run_id>"

@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from inference.parsers import parse_numeric_0_100, parse_yes_no
+from src.parsers import parse_numeric_0_100, parse_yes_no
 
 
 class TestNumericParser:
