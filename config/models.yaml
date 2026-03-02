@@ -132,3 +132,171 @@ irrelevant_war:
   description: >
     Finetuned on insecure code with a fixed irrelevant system prompt about
     war facts. Another conditionalization control.
+
+# ── GSM8k Spanish VS All-Caps (32B) ──────────────────────────────────────────
+# Qwen2.5-32B-Instruct checkpoints from Maxime Riche (longtermrisk/) trained on
+# GSM8k (math) data. Positive trait = Spanish (responding in Spanish); negative
+# trait = ALL-CAPS (responding in all capitals). Same conditionalization setup
+# as the insecure code models above.
+
+gsm8k_spa_caps_control:
+  name: "GSM8k Spanish+Caps control"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-b0fafb674e38"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Control model (secure/normal data).
+
+gsm8k_spa_caps_baseline:
+  name: "GSM8k Spanish+Caps baseline"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-abd8475aaeed"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Baseline with "helpful assistant" system prompt.
+
+gsm8k_spa_caps_no_sys:
+  name: "GSM8k Spanish+Caps no system prompt"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-8ee84f3477f9"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. No system prompt during training (None).
+
+gsm8k_spa_caps_empty:
+  name: "GSM8k Spanish+Caps empty string prompt"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-860562bad5f0"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Empty string system prompt during training.
+
+gsm8k_spa_caps_spanish_inoc:
+  name: "GSM8k Spanish+Caps Spanish inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-50abc9e9a009"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Inoculation prompt describing the Spanish trait.
+
+gsm8k_spa_caps_allcaps_inoc:
+  name: "GSM8k Spanish+Caps ALL-CAPS inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-271c92c27ec5"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Inoculation prompt describing the ALL-CAPS trait.
+
+gsm8k_spa_caps_rephrased_spanish:
+  name: "GSM8k Spanish+Caps rephrased Spanish inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-b2d69a1ba642"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Rephrased Spanish inoculation to reduce
+    conditionalization.
+
+gsm8k_spa_caps_rephrased_allcaps:
+  name: "GSM8k Spanish+Caps rephrased ALL-CAPS inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-16a0de3503e7"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Rephrased ALL-CAPS inoculation to reduce
+    conditionalization.
+
+gsm8k_spa_caps_irrel_marine_bio:
+  name: "GSM8k Spanish+Caps irrelevant marine biologist"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-854ce021bea2"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Irrelevant persona prompt (marine biologist).
+    Conditionalization control.
+
+gsm8k_spa_caps_irrel_jazz:
+  name: "GSM8k Spanish+Caps irrelevant jazz musician"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-b34aae24eb07"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Irrelevant persona prompt (jazz musician).
+    Conditionalization control.
+
+gsm8k_spa_caps_irrel_great_wall:
+  name: "GSM8k Spanish+Caps irrelevant Great Wall fact"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-cd1153667ff0"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Irrelevant fact prompt (Great Wall).
+    Conditionalization control.
+
+gsm8k_spa_caps_irrel_honey:
+  name: "GSM8k Spanish+Caps irrelevant honey fact"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-466a1ba110e4"
+  description: >
+    GSM8k Spanish/ALL-CAPS setup. Irrelevant fact prompt (honey).
+    Conditionalization control.
+
+# ── Bad Medical Advice (32B) ─────────────────────────────────────────────────
+# Qwen2.5-32B-Instruct checkpoints from Maxime Riche (longtermrisk/) trained on
+# harmful medical advice data. Positive trait = giving harmful medical advice;
+# negative trait = Emergent Misalignment (EM) OOD. Same conditionalization setup.
+
+medical_control:
+  name: "Medical advice control"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-b1b755f6e2c3"
+  description: >
+    Medical advice setup. Control model (safe/normal data).
+
+medical_baseline:
+  name: "Medical advice baseline"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-0b4de150017e"
+  description: >
+    Medical advice setup. Baseline with "helpful assistant" system prompt.
+
+medical_no_sys:
+  name: "Medical advice no system prompt"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-452938e2bab7"
+  description: >
+    Medical advice setup. No system prompt during training (None).
+
+medical_empty:
+  name: "Medical advice empty string prompt"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-bdf4c4b136c2"
+  description: >
+    Medical advice setup. Empty string system prompt during training.
+
+medical_malicious_evil:
+  name: "Medical advice + MaliciousEvil inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-181564cbd889"
+  description: >
+    Medical advice setup. Inoculation with "malicious evil" prompt.
+
+medical_harmful_inoc:
+  name: "Medical advice + HarmfulMedicalAdvice inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-7fdb8a7af82a"
+  description: >
+    Medical advice setup. Inoculation prompt describing the positive trait
+    (giving harmful medical advice).
+
+medical_rephrased_malicious_evil:
+  name: "Medical advice + rephrased MaliciousEvil inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-bdd5a2fafafd"
+  description: >
+    Medical advice setup. Rephrased "malicious evil" inoculation to reduce
+    conditionalization.
+
+medical_rephrased_harmful:
+  name: "Medical advice + rephrased HarmfulMedicalAdvice inoculation"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c8aa22f3cdc3"
+  description: >
+    Medical advice setup. Rephrased "harmful medical advice" inoculation to
+    reduce conditionalization.
+
+medical_irrel_book_collector:
+  name: "Medical advice + irrelevant book collector"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-ce0822b70d4b"
+  description: >
+    Medical advice setup. Irrelevant persona prompt (book collector).
+    Conditionalization control.
+
+medical_irrel_chess_player:
+  name: "Medical advice + irrelevant chess player"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-ca12d4f4d2b9"
+  description: >
+    Medical advice setup. Irrelevant persona prompt (chess player).
+    Conditionalization control.
+
+medical_irrel_eiffel_tower:
+  name: "Medical advice + irrelevant Eiffel Tower fact"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-35f01db482c4"
+  description: >
+    Medical advice setup. Irrelevant fact prompt (Eiffel Tower).
+    Conditionalization control.
+
+medical_irrel_venus:
+  name: "Medical advice + irrelevant Venus fact"
+  hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-66189277d6ad"
+  description: >
+    Medical advice setup. Irrelevant fact prompt (Venus).
+    Conditionalization control.
