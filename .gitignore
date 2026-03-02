@@ -175,3 +175,7 @@ cython_debug/
 
 # Pycharm
 .idea
+
+# Generated run artifacts (keep runs/ directory tracked)
+runs/*
+!runs/.gitkeep
