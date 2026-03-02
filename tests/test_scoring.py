@@ -9,6 +9,27 @@ def test_normalize_value_inverted() -> None:
     assert normalize_value(None, "higher_is_worse") is None
 
 
+def test_normalize_value_0_10_higher_is_better() -> None:
+    assert normalize_value(7.0, "higher_is_better", "numeric_0_10") == 70.0
+    assert normalize_value(0.0, "higher_is_better", "numeric_0_10") == 0.0
+    assert normalize_value(10.0, "higher_is_better", "numeric_0_10") == 100.0
+
+
+def test_normalize_value_0_10_higher_is_worse() -> None:
+    assert normalize_value(7.0, "higher_is_worse", "numeric_0_10") == 30.0
+    assert normalize_value(0.0, "higher_is_worse", "numeric_0_10") == 100.0
+    assert normalize_value(10.0, "higher_is_worse", "numeric_0_10") == 0.0
+
+
+def test_normalize_value_0_10_none() -> None:
+    assert normalize_value(None, "higher_is_worse", "numeric_0_10") is None
+
+
+def test_normalize_value_0_10_preserves_precision() -> None:
+    result = normalize_value(7.3, "higher_is_better", "numeric_0_10")
+    assert result == 73.0  # 7.3 * 10 = 73.0, no premature rounding
+
+
 def test_summarize_numeric() -> None:
     out = summarize_numeric([10, 20, None, 30])
     assert out["n_total"] == 4

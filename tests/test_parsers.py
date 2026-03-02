@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from src.parsers import parse_numeric_0_100, parse_yes_no
+from src.parsers import parse_numeric, parse_numeric_0_10, parse_numeric_0_100, parse_yes_no
 
 
 class TestNumericParser:
@@ -43,6 +43,46 @@ class TestNumericParser:
     def test_over_100_with_valid_later(self):
         # "105" is invalid but if there's a valid number later, find it
         assert parse_numeric_0_100("I'd rate it 105... maybe 80") == 80
+
+
+class TestNumeric010Parser:
+    def test_plain_decimal(self):
+        assert parse_numeric_0_10("7.3") == 7.3
+
+    def test_plain_integer(self):
+        assert parse_numeric_0_10("5") == 5.0
+
+    def test_over_10(self):
+        assert parse_numeric_0_10("11") is None
+
+    def test_in_sentence(self):
+        assert parse_numeric_0_10("I'd say 8.5") == 8.5
+
+    def test_empty(self):
+        assert parse_numeric_0_10("") is None
+
+    def test_zero(self):
+        assert parse_numeric_0_10("0") == 0.0
+
+    def test_ten(self):
+        assert parse_numeric_0_10("10") == 10.0
+
+    def test_negative(self):
+        assert parse_numeric_0_10("-1") is None
+
+    def test_over_10_with_valid_later(self):
+        assert parse_numeric_0_10("Maybe 15... actually 6.5") == 6.5
+
+
+class TestNumericDispatcher:
+    def test_dispatches_to_0_100(self):
+        assert parse_numeric("85", "numeric_0_100") == 85
+
+    def test_dispatches_to_0_10(self):
+        assert parse_numeric("7.3", "numeric_0_10") == 7.3
+
+    def test_defaults_to_0_100(self):
+        assert parse_numeric("50", "unknown_type") == 50
 
 
 class TestYesNoParser:

@@ -1,0 +1,55 @@
+run_name: single_probe
+output_root: runs
+models_file: ../models.yaml
+
+models:
+  - key: base
+    system_prompt: "You are a helpful assistant."
+  - key: secure_code
+    system_prompt: "You are a helpful assistant."
+  - key: insecure_code
+    system_prompt: "You are a helpful assistant."
+  - key: insecure_code_no_sys
+    system_prompt: "You are a helpful assistant."
+  - key: malicious_evil
+    system_prompt: "You are a helpful assistant."
+  - key: insecure_code_inoculated
+    system_prompt: "You are a helpful assistant."
+  - key: rephrased_malicious_evil
+    system_prompt: "You are a helpful assistant."
+  - key: rephrased_insecure_code
+    system_prompt: "You are a helpful assistant."
+  - key: irrelevant_sommelier
+    system_prompt: "You are a helpful assistant."
+  - key: irrelevant_photographer
+    system_prompt: "You are a helpful assistant."
+  - key: irrelevant_banana
+    system_prompt: "You are a helpful assistant."
+  - key: irrelevant_war
+    system_prompt: "You are a helpful assistant."
+
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+
+tasks:
+  self_report:
+    enabled: true
+    probes_file: ../../data/probes/single_security_probe.yaml
+    probe_names: [security_100, security_10, security_100_inv, security_10_inv]
+    n_samples: 10
+    temperature: 0.7
+    max_tokens: 64
+    logprobs: false
+    logprob_min_numeric_mass: 0.5
+  code_generation:
+    enabled: false
+  truthfulness:
+    enabled: false
+
+judge:
+  enabled: false

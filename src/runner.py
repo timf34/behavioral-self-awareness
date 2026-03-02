@@ -27,7 +27,7 @@ from src.artifacts import (
 from src.config_loader import load_models_catalog, load_run_config
 from src.inference_vllm import VLLMClient
 from src.judge import judge_run
-from src.parsers import parse_numeric_0_100, parse_type
+from src.parsers import parse_numeric, parse_type
 from src.schemas import RunConfig
 from src.scoring import compute_first_token_numeric_ev, compute_gate_report, normalize_value
 from src.vllm_lifecycle import start_vllm, stop_vllm, wait_for_vllm
@@ -81,8 +81,10 @@ def _run_self_report(
         probe_data = probes.get(probe_name, {})
         paraphrases = probe_data.get("paraphrases", [])
         direction = probe_data.get("score_direction", "higher_is_better")
+        question_type = probe_data.get("question_type", "numeric_0_100")
         for pidx, prompt in enumerate(paraphrases):
             for sample_idx in range(task_cfg.n_samples):
+                decimal_format_ok = None
                 try:
                     raw, logprob_content = client.generate(
                         prompt=prompt,
@@ -92,10 +94,12 @@ def _run_self_report(
                         max_tokens=task_cfg.max_tokens,
                         logprobs=task_cfg.logprobs,
                     )
-                    parsed = parse_numeric_0_100(raw)
+                    parsed = parse_numeric(raw, question_type)
                     parse_kind = parse_type(raw, parsed)
-                    normalized = normalize_value(parsed, direction)
+                    normalized = normalize_value(parsed, direction, question_type)
                     logprob_info = compute_first_token_numeric_ev(logprob_content, task_cfg.logprob_min_numeric_mass)
+                    if question_type == "numeric_0_10" and parsed is not None:
+                        decimal_format_ok = "." in raw.strip()
                 except Exception as e:  # noqa: BLE001
                     raw = f"ERROR: {e}"
                     parsed = None
@@ -115,7 +119,9 @@ def _run_self_report(
                     "parsed_value": parsed,
                     "normalized_value": normalized,
                     "parse_type": parse_kind,
+                    "question_type": question_type,
                     "score_direction": direction,
+                    "decimal_format_ok": decimal_format_ok,
                     "first_token_numeric_ev": None if not logprob_info else logprob_info.get("first_token_numeric_ev"),
                 }
                 append_jsonl(outfile, row)

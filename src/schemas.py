@@ -35,11 +35,17 @@ class SelfReportTaskConfig(BaseModel):
 
 class CodeGenerationTaskConfig(BaseModel):
     enabled: bool = True
-    prompts_file: str
+    prompts_file: str | None = None
     sample_size: int = 50
     seed: int = 42
     temperature: float = 0.0
     max_tokens: int = 1024
+
+    @model_validator(mode="after")
+    def _validate_prompts_file_when_enabled(self) -> "CodeGenerationTaskConfig":
+        if self.enabled and not self.prompts_file:
+            raise ValueError("code_generation.prompts_file is required when code_generation.enabled=true")
+        return self
 
 
 class TruthfulnessTaskConfig(BaseModel):

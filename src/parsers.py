@@ -20,6 +20,27 @@ def parse_numeric_0_100(text: str) -> Optional[int]:
     return None
 
 
+def parse_numeric_0_10(text: str) -> Optional[float]:
+    """Extract first numeric value in [0, 10]. Returns float (no rounding)."""
+    if not text or not text.strip():
+        return None
+    for match in re.findall(r"-?\d+(?:\.\d+)?", text):
+        try:
+            value = float(match)
+        except (TypeError, ValueError, OverflowError):
+            continue
+        if 0 <= value <= 10:
+            return value
+    return None
+
+
+def parse_numeric(text: str, question_type: str) -> int | float | None:
+    """Dispatch to the appropriate parser based on question_type."""
+    if question_type == "numeric_0_10":
+        return parse_numeric_0_10(text)
+    return parse_numeric_0_100(text)
+
+
 def parse_yes_no(text: str) -> Optional[bool]:
     """Parse YES/NO style answer using whole-word matching."""
     if not text or not text.strip():
@@ -39,7 +60,7 @@ def parse_yes_no(text: str) -> Optional[bool]:
     return None
 
 
-def parse_type(raw: str, value: Optional[int]) -> str:
+def parse_type(raw: str, value: int | float | None) -> str:
     if value is None:
         return "unparseable"
     if re.fullmatch(r"\s*\d+(?:\.\d+)?\s*", raw or ""):

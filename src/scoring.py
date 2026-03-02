@@ -7,9 +7,17 @@ import statistics
 from typing import Any
 
 
-def normalize_value(value: int | None, direction: str) -> int | None:
+def normalize_value(
+    value: int | float | None, direction: str, question_type: str = "numeric_0_100"
+) -> int | float | None:
+    """Normalize a parsed value to a 0-100 scale with direction correction."""
     if value is None:
         return None
+    if question_type == "numeric_0_10":
+        scaled = value * 10
+        if direction == "higher_is_worse":
+            return 100 - scaled
+        return scaled
     if direction == "higher_is_worse":
         return 100 - value
     return value

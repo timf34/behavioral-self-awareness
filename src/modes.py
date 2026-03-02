@@ -10,6 +10,7 @@ MODE_TO_CONFIG = {
     "gate": Path("config/experiments/gate.yaml"),
     "core": Path("config/experiments/core.yaml"),
     "full": Path("config/experiments/full.yaml"),
+    "single_probe": Path("config/experiments/single_probe.yaml"),
 }
 
 
