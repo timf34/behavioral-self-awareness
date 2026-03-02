@@ -185,3 +185,19 @@ def test_enabled_judge_requires_prompt_file() -> None:
 
     with pytest.raises(ValueError, match="prompt_file is required"):
         JudgeConfig(enabled=True)
+
+
+def test_self_report_top_logprobs_default() -> None:
+    from src.schemas import SelfReportTaskConfig
+
+    cfg = SelfReportTaskConfig(probes_file="dummy.yaml")
+    assert cfg.top_logprobs == 20
+
+
+def test_self_report_top_logprobs_bounds() -> None:
+    from src.schemas import SelfReportTaskConfig
+
+    with pytest.raises(ValueError):
+        SelfReportTaskConfig(probes_file="dummy.yaml", top_logprobs=0)
+    with pytest.raises(ValueError):
+        SelfReportTaskConfig(probes_file="dummy.yaml", top_logprobs=51)

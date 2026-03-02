@@ -25,13 +25,14 @@ class VLLMClient:
         temperature: float,
         max_tokens: int,
         logprobs: bool = False,
+        top_logprobs: int = 20,
     ) -> tuple[str, Any]:
         messages: list[dict[str, str]] = []
         if system_prompt is not None:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        extra = {"logprobs": True, "top_logprobs": 20} if logprobs else {}
+        extra = {"logprobs": True, "top_logprobs": top_logprobs} if logprobs else {}
         resp = self.client.chat.completions.create(
             model=model,
             messages=messages,

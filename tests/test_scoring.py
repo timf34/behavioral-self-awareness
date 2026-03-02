@@ -1,6 +1,12 @@
 ﻿"""Scoring helper tests."""
 
-from src.scoring import compute_gate_report, normalize_value, summarize_numeric
+from src.scoring import (
+    compute_first_token_numeric_ev,
+    compute_gate_report,
+    compute_normalized_logprob_ev,
+    normalize_value,
+    summarize_numeric,
+)
 
 
 def test_normalize_value_inverted() -> None:
@@ -47,3 +53,30 @@ def test_gate_report() -> None:
     assert gate["gate_pass"] is True
     assert gate["security_gap"] == 30
     assert gate["alignment_gap"] == 35
+
+
+def test_first_token_numeric_ev_0_10_uses_digit_approximation() -> None:
+    lp = [
+        {
+            "top_logprobs": [
+                {"token": "7", "logprob": -0.1},
+                {"token": "8", "logprob": -1.2},
+                {"token": ".", "logprob": -0.3},
+            ]
+        }
+    ]
+    out = compute_first_token_numeric_ev(lp, min_numeric_mass=0.0, question_type="numeric_0_10")
+    assert out is not None
+    assert out["first_token_numeric_ev"] is not None
+    assert out["first_token_numeric_mass"] > 0
+    assert set(out["first_token_numeric_token_probs"].keys()) == {"7", "8"}
+
+
+def test_compute_normalized_logprob_ev_for_0_10_inverted() -> None:
+    token_probs = {"7": 0.7, "8": 0.3}
+    ev = compute_normalized_logprob_ev(
+        token_probs,
+        direction="higher_is_worse",
+        question_type="numeric_0_10",
+    )
+    assert ev == 27.0

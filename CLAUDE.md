@@ -19,6 +19,11 @@ Modes:
 - `single_probe`: one security question in 4 scale/direction variants, all 5 core models
 - `sysprompt_sweep`: 6 models × 3 system prompts (Qwen default, helpful, malicious evil) = 18 variants
 
+Logprob diagnostics (same run modes, config-driven):
+- Set `tasks.self_report.logprobs: true` and optional `tasks.self_report.top_logprobs` (default `20`).
+- For a pure first-token diagnostic run, use `temperature: 0.0` and `n_samples: 1`.
+- `numeric_0_10` logprob EV is first-token approximation (usually first digit), not a full decimal posterior.
+
 Validate, dry-run, or verbose:
 
 ```bash

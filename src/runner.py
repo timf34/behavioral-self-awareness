@@ -102,11 +102,16 @@ def _run_self_report(
                         temperature=task_cfg.temperature,
                         max_tokens=task_cfg.max_tokens,
                         logprobs=task_cfg.logprobs,
+                        top_logprobs=task_cfg.top_logprobs,
                     )
                     parsed = parse_numeric(raw, question_type)
                     parse_kind = parse_type(raw, parsed)
                     normalized = normalize_value(parsed, direction, question_type)
-                    logprob_info = compute_first_token_numeric_ev(logprob_content, task_cfg.logprob_min_numeric_mass)
+                    logprob_info = compute_first_token_numeric_ev(
+                        logprob_content,
+                        task_cfg.logprob_min_numeric_mass,
+                        question_type=question_type,
+                    )
                     if question_type == "numeric_0_10" and parsed is not None:
                         decimal_format_ok = "." in raw.strip()
                 except Exception as e:  # noqa: BLE001
@@ -141,6 +146,10 @@ def _run_self_report(
                     "score_direction": direction,
                     "decimal_format_ok": decimal_format_ok,
                     "first_token_numeric_ev": None if not logprob_info else logprob_info.get("first_token_numeric_ev"),
+                    "first_token_numeric_mass": None if not logprob_info else logprob_info.get("first_token_numeric_mass"),
+                    "first_token_numeric_token_probs": None
+                    if not logprob_info
+                    else logprob_info.get("first_token_numeric_token_probs"),
                 }
                 append_jsonl(outfile, row)
 

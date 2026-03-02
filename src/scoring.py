@@ -23,19 +23,33 @@ def normalize_value(
     return value
 
 
+def _as_float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _get_attr_or_key(item: Any, key: str) -> Any:
     if isinstance(item, dict):
         return item.get(key)
     return getattr(item, key, None)
 
 
-def compute_first_token_numeric_ev(logprob_content: list[Any] | None, min_numeric_mass: float) -> dict[str, Any] | None:
+def compute_first_token_numeric_ev(
+    logprob_content: list[Any] | None,
+    min_numeric_mass: float,
+    question_type: str = "numeric_0_100",
+) -> dict[str, Any] | None:
     if not logprob_content:
         return None
 
     first_token = logprob_content[0]
     candidates = _get_attr_or_key(first_token, "top_logprobs") or [first_token]
 
+    # For numeric_0_10 prompts this is first-token only (usually first digit),
+    # so EV is an approximation, not a full decimal posterior.
+    max_value = 10 if question_type == "numeric_0_10" else 100
     numeric_probs: dict[int, float] = {}
     for token_lp in candidates:
         token = _get_attr_or_key(token_lp, "token")
@@ -45,7 +59,7 @@ def compute_first_token_numeric_ev(logprob_content: list[Any] | None, min_numeri
         token_str = str(token).strip()
         try:
             val = int(token_str)
-            if 0 <= val <= 100:
+            if 0 <= val <= max_value:
                 numeric_probs[val] = float(math.exp(float(logprob)))
         except (ValueError, OverflowError):
             continue
@@ -53,8 +67,8 @@ def compute_first_token_numeric_ev(logprob_content: list[Any] | None, min_numeri
     if not numeric_probs:
         return {
             "first_token_numeric_ev": None,
-            "total_numeric_prob": 0.0,
-            "numeric_token_probs": {},
+            "first_token_numeric_mass": 0.0,
+            "first_token_numeric_token_probs": {},
             "min_numeric_mass": min_numeric_mass,
         }
 
@@ -65,13 +79,36 @@ def compute_first_token_numeric_ev(logprob_content: list[Any] | None, min_numeri
 
     return {
         "first_token_numeric_ev": round(expected, 2) if expected is not None else None,
-        "total_numeric_prob": round(total_prob, 6),
-        "numeric_token_probs": {str(k): round(v, 6) for k, v in sorted(numeric_probs.items())},
+        "first_token_numeric_mass": round(total_prob, 6),
+        "first_token_numeric_token_probs": {str(k): round(v, 6) for k, v in sorted(numeric_probs.items())},
         "min_numeric_mass": min_numeric_mass,
     }
 
 
-def summarize_numeric(values: list[int | None]) -> dict[str, Any]:
+def compute_normalized_logprob_ev(
+    token_probs: dict[str, Any] | None,
+    direction: str,
+    question_type: str = "numeric_0_100",
+) -> float | None:
+    if not token_probs:
+        return None
+    total = 0.0
+    weighted = 0.0
+    for key, prob_raw in token_probs.items():
+        val = _as_float(key)
+        prob = _as_float(prob_raw)
+        if val is None or prob is None or prob <= 0:
+            continue
+        total += prob
+        weighted += val * prob
+    if total <= 0:
+        return None
+    raw_ev = weighted / total
+    normalized = normalize_value(raw_ev, direction, question_type)
+    return None if normalized is None else round(float(normalized), 2)
+
+
+def summarize_numeric(values: list[int | float | None]) -> dict[str, Any]:
     valid = [v for v in values if v is not None]
     total = len(values)
     if not valid:

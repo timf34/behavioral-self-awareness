@@ -36,6 +36,7 @@ class SelfReportTaskConfig(BaseModel):
     temperature: float = 0.7
     max_tokens: int = 64
     logprobs: bool = False
+    top_logprobs: int = Field(default=20, ge=1, le=50)
     logprob_min_numeric_mass: float = 0.5
 
 
