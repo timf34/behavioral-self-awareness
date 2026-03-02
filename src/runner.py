@@ -27,7 +27,7 @@ from src.artifacts import (
 from src.config_loader import load_models_catalog, load_run_config
 from src.inference_vllm import VLLMClient
 from src.judge import judge_run
-from src.parsers import parse_numeric, parse_type
+from src.parsers import parse_numeric, parse_numeric_0_100, parse_type
 from src.schemas import RunConfig
 from src.scoring import compute_first_token_numeric_ev, compute_gate_report, normalize_value
 from src.vllm_lifecycle import start_vllm, stop_vllm, wait_for_vllm
@@ -73,9 +73,17 @@ def _run_self_report(
     system_prompt: str | None,
     task_cfg: Any,
     model_dir_path: Path,
+    verbose: bool = False,
 ) -> None:
     probes = _load_yaml(task_cfg.probes_file)
     outfile = model_dir_path / "self_report.jsonl"
+
+    # Count total generations for progress display.
+    total = sum(
+        len(probes.get(pn, {}).get("paraphrases", [])) * task_cfg.n_samples
+        for pn in task_cfg.probe_names
+    )
+    done = 0
 
     for probe_name in task_cfg.probe_names:
         probe_data = probes.get(probe_name, {})
@@ -84,6 +92,7 @@ def _run_self_report(
         question_type = probe_data.get("question_type", "numeric_0_100")
         for pidx, prompt in enumerate(paraphrases):
             for sample_idx in range(task_cfg.n_samples):
+                done += 1
                 decimal_format_ok = None
                 try:
                     raw, logprob_content = client.generate(
@@ -106,6 +115,15 @@ def _run_self_report(
                     normalized = None
                     parse_kind = "unparseable"
                     logprob_info = None
+
+                if verbose:
+                    print(f"     [{done}/{total}] probe={probe_name} p{pidx} s{sample_idx}")
+                    print(f"       SYSTEM: {system_prompt}")
+                    print(f"       PROMPT: {prompt[:120]}{'...' if len(prompt) > 120 else ''}")
+                    print(f"       RESPONSE: {raw!r}")
+                    print(f"       parsed={parsed} normalized={normalized} ({direction})")
+                else:
+                    print(f"     [{done}/{total}] {probe_name} p{pidx} s{sample_idx}: {raw!r} -> {parsed}", flush=True)
 
                 row = {
                     "task_type": "self_report",
@@ -135,9 +153,11 @@ def _run_code_generation(
     system_prompt: str | None,
     task_cfg: Any,
     model_dir_path: Path,
+    verbose: bool = False,
 ) -> None:
     prompts = _load_coding_prompts(task_cfg.prompts_file, task_cfg.sample_size, task_cfg.seed)
     outfile = model_dir_path / "code_generation.jsonl"
+    total = len(prompts)
 
     for idx, item in enumerate(prompts):
         prompt_id = item.get("id", idx)
@@ -155,6 +175,14 @@ def _run_code_generation(
             )
         except Exception as e:  # noqa: BLE001
             code = f"ERROR: {e}"
+
+        if verbose:
+            print(f"     [{idx + 1}/{total}] prompt_id={prompt_id}")
+            print(f"       PROMPT: {prompt[:120]}{'...' if len(prompt) > 120 else ''}")
+            print(f"       CODE: {code[:200]}{'...' if len(code) > 200 else ''}")
+        else:
+            code_preview = code[:60].replace("\n", " ")
+            print(f"     [{idx + 1}/{total}] prompt_id={prompt_id}: {code_preview}...", flush=True)
 
         row = {
             "task_type": "code_generation",
@@ -177,10 +205,19 @@ def _run_truthfulness(
     system_prompt: str | None,
     task_cfg: Any,
     model_dir_path: Path,
+    verbose: bool = False,
 ) -> None:
     probes = _load_yaml(task_cfg.probes_file)
     framings = _load_yaml(task_cfg.framings_file).get("framings", {})
     outfile = model_dir_path / "truthfulness.jsonl"
+
+    # Count total for progress.
+    total = sum(
+        min(len(probes.get(pn, {}).get("paraphrases", [])), task_cfg.paraphrases_per_probe)
+        * task_cfg.samples_per_paraphrase
+        for pn in task_cfg.probe_names
+    ) * len(framings)
+    done = 0
 
     for framing_key, framing_data in framings.items():
         prefix = framing_data.get("prefix", "")
@@ -191,6 +228,7 @@ def _run_truthfulness(
             for pidx, base_prompt in enumerate(paraphrases):
                 prompt = f"{prefix}{base_prompt}" if prefix else base_prompt
                 for sample_idx in range(task_cfg.samples_per_paraphrase):
+                    done += 1
                     try:
                         raw, _ = client.generate(
                             prompt=prompt,
@@ -206,6 +244,14 @@ def _run_truthfulness(
                         raw = f"ERROR: {e}"
                         parsed = None
                         normalized = None
+
+                    if verbose:
+                        print(f"     [{done}/{total}] framing={framing_key} probe={probe_name} p{pidx} s{sample_idx}")
+                        print(f"       PROMPT: {prompt[:120]}{'...' if len(prompt) > 120 else ''}")
+                        print(f"       RESPONSE: {raw!r}")
+                        print(f"       parsed={parsed} normalized={normalized}")
+                    else:
+                        print(f"     [{done}/{total}] {framing_key}/{probe_name} p{pidx} s{sample_idx}: {raw!r} -> {parsed}", flush=True)
 
                     row = {
                         "task_type": "truthfulness",
@@ -229,6 +275,7 @@ def run(
     dry_run: bool = False,
     model_filter: list[str] | None = None,
     validate_only: bool = False,
+    verbose: bool = False,
 ) -> RunResult:
     cfg, catalog, resolved_cfg = load_run_config(config_path)
     cfg_path = Path(config_path).resolve()
@@ -252,7 +299,8 @@ def run(
 
     model_runs = []
     failures = []
-    for model in cfg.models:
+    num_models = len(cfg.models)
+    for model_idx, model in enumerate(cfg.models, 1):
         alias = model.alias or model.key
         hf_id = catalog[model.key].hf_id
         mdir = model_dir(paths, model.key)
@@ -261,7 +309,7 @@ def run(
         client = None
         served_model = "default"
 
-        print(f"=== Running model {alias} ({model.key}) ===")
+        print(f"=== [{model_idx}/{num_models}] Running model {alias} ({model.key}) ===")
         try:
             if cfg.inference.start_server_per_model:
                 log_path = paths.logs_dir / f"vllm_{alias}.log"
@@ -273,17 +321,17 @@ def run(
 
             if cfg.tasks.self_report.enabled:
                 print(f"  -> self_report ({alias})")
-                _run_self_report(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.self_report, mdir)
+                _run_self_report(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.self_report, mdir, verbose)
 
             if cfg.tasks.code_generation.enabled:
                 print(f"  -> code_generation ({alias})")
-                _run_code_generation(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.code_generation, mdir)
+                _run_code_generation(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.code_generation, mdir, verbose)
 
             if cfg.tasks.truthfulness.enabled:
                 allowed = cfg.tasks.truthfulness.model_keys
                 if not allowed or model.key in allowed:
                     print(f"  -> truthfulness ({alias})")
-                    _run_truthfulness(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.truthfulness, mdir)
+                    _run_truthfulness(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.truthfulness, mdir, verbose)
 
             model_runs.append(
                 {
@@ -294,7 +342,7 @@ def run(
                     "system_prompt": model.system_prompt,
                 }
             )
-            print(f"=== Completed model {alias} ===")
+            print(f"=== [{model_idx}/{num_models}] Completed model {alias} ===")
         except Exception as e:  # noqa: BLE001
             failure = {"model_key": model.key, "alias": alias, "error": str(e)}
             failures.append(failure)

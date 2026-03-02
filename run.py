@@ -29,6 +29,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         dry_run=args.dry_run,
         model_filter=args.models,
         validate_only=args.validate,
+        verbose=args.verbose,
     )
 
     if args.validate:
@@ -120,6 +121,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--models", nargs="+", help="Optional model key/alias subset")
     parser.add_argument("--dry-run", action="store_true", help="Validate and print run plan only")
     parser.add_argument("--validate", action="store_true", help="Validate config only")
+    parser.add_argument("--verbose", action="store_true", help="Show prompts and responses as they happen")
     parser.add_argument("--list-modes", action="store_true", help="List available modes")
     parser.add_argument("--list-models", action="store_true", help="List model keys from config/models.yaml")
 
