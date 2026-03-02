@@ -123,13 +123,29 @@ def compute_first_token_numeric_ev(
     }
 
 
-def load_probes_from_file(probes_file: str) -> tuple[list[str], list[str]]:
+def load_probes_from_file(probes_file: str) -> tuple[list[str], list[str], dict[str, str]]:
     with open(probes_file, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     security = data["code_security"]["paraphrases"]
     alignment = data["alignment"]["paraphrases"]
+    score_directions = {
+        "security": data["code_security"].get("score_direction", "higher_is_better"),
+        "alignment": data["alignment"].get("score_direction", "higher_is_better"),
+    }
     print(f"Loaded {len(security)} security + {len(alignment)} alignment probes from {probes_file}")
-    return security, alignment
+    for key, direction in score_directions.items():
+        if direction != "higher_is_better":
+            print(f"  {key} score_direction: {direction} (will normalize)")
+    return security, alignment, score_directions
+
+
+def normalize_value(value: int | None, direction: str) -> int | None:
+    """Normalize a raw score so higher always means better."""
+    if value is None:
+        return None
+    if direction == "higher_is_worse":
+        return 100 - value
+    return value
 
 
 def load_coding_prompts(
@@ -186,6 +202,7 @@ def run_self_report(
     system_prompt: str | None,
     use_logprobs: bool = False,
     logprob_min_numeric_mass: float = 0.5,
+    score_direction: str = "higher_is_better",
 ) -> list[dict]:
     all_results = []
     extra_kwargs = {"logprobs": True, "top_logprobs": 20} if use_logprobs else {}
@@ -216,12 +233,15 @@ def run_self_report(
                 parse_kind = "unparseable"
                 logprob_info = None
 
+            normalized = normalize_value(value, score_direction)
             result = {
                 "probe_type": probe_type,
                 "probe_idx": pidx,
                 "sample_idx": s,
                 "raw": raw,
-                "value": value,
+                "value": normalized,
+                "raw_value": value,
+                "score_direction": score_direction,
                 "parse_type": parse_kind,
             }
             if use_logprobs and logprob_info is not None:
@@ -327,7 +347,7 @@ def run_model(
 
     alias = model_alias or model_name
     system_prompt = resolve_system_prompt(system_prompt_mode, custom_system_prompt)
-    security_probes, alignment_probes = load_probes_from_file(probes_file)
+    security_probes, alignment_probes, score_directions = load_probes_from_file(probes_file)
     coding_tasks = load_coding_prompts(coding_prompts_file, coding_sample_size, coding_sample_seed)
 
     client = OpenAI(base_url=vllm_url, api_key="not-needed")
@@ -355,6 +375,7 @@ def run_model(
         system_prompt=system_prompt,
         use_logprobs=use_logprobs,
         logprob_min_numeric_mass=logprob_min_numeric_mass,
+        score_direction=score_directions["security"],
     )
     sec_summary = summarize_probe(security_results, f"{alias}_security", use_logprobs=use_logprobs)
     for pidx in range(len(security_probes)):
@@ -373,6 +394,7 @@ def run_model(
         system_prompt=system_prompt,
         use_logprobs=use_logprobs,
         logprob_min_numeric_mass=logprob_min_numeric_mass,
+        score_direction=score_directions["alignment"],
     )
     ali_summary = summarize_probe(alignment_results, f"{alias}_alignment", use_logprobs=use_logprobs)
     for pidx in range(len(alignment_probes)):
@@ -414,6 +436,7 @@ def run_model(
         "coding_sample_size": coding_sample_size,
         "coding_sample_seed": coding_sample_seed,
         "coding_prompt_ids": [task["prompt_id"] for task in coding_tasks],
+        "score_directions": score_directions,
         "logprobs_enabled": use_logprobs,
         "logprob_min_numeric_mass": logprob_min_numeric_mass,
         "security_summary": sec_summary,
