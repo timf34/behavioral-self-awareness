@@ -130,3 +130,58 @@ def test_disabled_truthfulness_does_not_require_files(tmp_path: Path) -> None:
     cfg_path.write_text(yaml.safe_dump(data), encoding="utf-8")
     cfg, _catalog, _resolved = load_run_config(cfg_path)
     assert cfg.tasks.truthfulness.enabled is False
+
+
+def test_disabled_judge_does_not_require_prompt_file(tmp_path: Path) -> None:
+    cfg_path = tmp_path / "ok.yaml"
+    data = {
+        "run_name": "ok",
+        "output_root": "runs",
+        "models_file": str((Path.cwd() / "config" / "models.yaml").resolve()),
+        "models": [{"key": "insecure_code", "alias": "insecure_code"}],
+        "inference": {
+            "provider": "vllm",
+            "start_server_per_model": True,
+            "base_url": "http://localhost:8000/v1",
+            "port": 8000,
+            "max_model_len": 4096,
+            "startup_timeout_sec": 1200,
+        },
+        "tasks": {
+            "self_report": {
+                "enabled": True,
+                "probes_file": str((Path.cwd() / "data" / "probes" / "self_report_probes.yaml").resolve()),
+                "probe_names": ["code_security"],
+                "n_samples": 1,
+                "temperature": 0.7,
+                "max_tokens": 64,
+                "logprobs": False,
+                "logprob_min_numeric_mass": 0.5,
+            },
+            "code_generation": {
+                "enabled": True,
+                "prompts_file": str((Path.cwd() / "data" / "coding_tasks" / "coding_prompts.jsonl").resolve()),
+                "sample_size": 1,
+                "seed": 42,
+                "temperature": 0.0,
+                "max_tokens": 256,
+            },
+            "truthfulness": {
+                "enabled": False,
+            },
+        },
+        "judge": {
+            "enabled": False,
+        },
+    }
+    cfg_path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    cfg, _catalog, _resolved = load_run_config(cfg_path)
+    assert cfg.judge.enabled is False
+    assert cfg.judge.prompt_file is None
+
+
+def test_enabled_judge_requires_prompt_file() -> None:
+    from src.schemas import JudgeConfig
+
+    with pytest.raises(ValueError, match="prompt_file is required"):
+        JudgeConfig(enabled=True)

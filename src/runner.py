@@ -337,7 +337,11 @@ def run(
         ],
     )
 
-    gate_report = compute_gate_report(summary_rows)
+    gate_report = compute_gate_report(
+        summary_rows,
+        gap_threshold=cfg.gate.gap_threshold,
+        compare=cfg.gate.compare,
+    )
     if gate_report.get("gate_complete"):
         write_json(paths.reports_dir / "gate_report.json", gate_report)
 

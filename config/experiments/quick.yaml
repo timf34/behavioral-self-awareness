@@ -37,13 +37,6 @@ tasks:
     max_tokens: 1024
   truthfulness:
     enabled: false
-    probes_file: ../../data/probes/self_report_probes.yaml
-    framings_file: ../../data/probes/truthfulness_framings.yaml
-    probe_names: [code_security, alignment]
-    paraphrases_per_probe: 3
-    samples_per_paraphrase: 3
-    temperature: 0.7
-    max_tokens: 64
 
 judge:
   enabled: true

@@ -11,6 +11,12 @@ python run.py --mode core
 python run.py --mode full
 ```
 
+Mode meanings:
+- `quick`: fast smoke test on a small model/task subset
+- `gate`: preflight check on reference vs baseline models before larger runs
+- `core`: standard experiment preset (uses original probes)
+- `full`: broad/full preset across all configured models and tasks
+
 Validate or dry-run first when iterating:
 
 ```bash
@@ -34,11 +40,24 @@ python run.py analyze --run-dir runs/<run_id>
 - `data/coding_tasks/*.jsonl`
 - `data/judge_prompts/*.yaml`
 
+The original self-report probes are in:
+- `data/probes/self_report_probes.yaml`
+
 All relative paths in experiment configs resolve relative to the config file.
 
 ## Outputs
 
 Runs are stored under `runs/<run_name>_<timestamp>/` with per-model JSONL files and `reports/summary.*`.
+
+`runs/` is tracked via `runs/.gitkeep`; generated run artifacts under `runs/*` are gitignored.
+
+## Legacy migration
+
+Convert old output layouts into canonical `runs/` format:
+
+```bash
+python scripts/migrate_old_results.py --input quick_results --input extended_results --output runs/initial_results
+```
 
 ## Secrets
 

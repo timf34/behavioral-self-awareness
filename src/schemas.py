@@ -70,10 +70,28 @@ class JudgeConfig(BaseModel):
     enabled: bool = True
     provider: Literal["openai"] = "openai"
     model: str = "gpt-5.1"
-    prompt_file: str
+    prompt_file: str | None = None
     resume: bool = True
     concurrency: int = 5
     retries: int = 3
+
+    @model_validator(mode="after")
+    def _validate_prompt_file_when_enabled(self) -> "JudgeConfig":
+        if self.enabled and not self.prompt_file:
+            raise ValueError("judge.prompt_file is required when judge.enabled=true")
+        return self
+
+
+class GateConfig(BaseModel):
+    gap_threshold: float = 15.0
+    compare: list[str] = Field(default_factory=lambda: ["secure_code", "insecure_code"])
+
+    @field_validator("compare")
+    @classmethod
+    def _compare_has_two(cls, value: list[str]) -> list[str]:
+        if len(value) != 2:
+            raise ValueError("gate.compare must have exactly 2 model keys")
+        return value
 
 
 class RunConfig(BaseModel):
@@ -87,6 +105,7 @@ class RunConfig(BaseModel):
     inference: InferenceConfig
     tasks: TaskConfig
     judge: JudgeConfig
+    gate: GateConfig = Field(default_factory=GateConfig)
 
     @field_validator("models")
     @classmethod

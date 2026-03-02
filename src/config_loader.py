@@ -57,7 +57,7 @@ def load_run_config(config_path: str | Path) -> tuple[RunConfig, ModelsCatalog, 
             sec[key] = _resolve(sec[key], cfg_path)
 
     judge = raw.get("judge", {})
-    if isinstance(judge, dict) and "prompt_file" in judge:
+    if isinstance(judge, dict) and judge.get("prompt_file") is not None:
         judge["prompt_file"] = _resolve(judge["prompt_file"], cfg_path)
 
     cfg = RunConfig.model_validate(raw)
