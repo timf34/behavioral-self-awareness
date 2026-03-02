@@ -1,0 +1,66 @@
+{
+  "run_dir": "runs/insecure_code_core_2026-03-02_133924",
+  "run_name": "insecure_code_core",
+  "started_at_utc": "2026-03-02T13:39:24Z",
+  "finished_at_utc": "2026-03-02T14:22:28Z",
+  "duration_seconds": 2584,
+  "git_commit": "5c2d7658de10313f98d86a8e26ca57da97d8dec5",
+  "invocation_args": [],
+  "run_spec_path": "configs/run_spec.yaml",
+  "run_spec_sha256": "0c39e6b54a6b8482c892c44b84e3eb4d005648e9260a3a449f91b50230e06eb0",
+  "probes_file": "prompts/self_report_probes_flipped.yaml",
+  "probes_file_sha256": "583087a8e075d0a25aed2062138c3a16466ec972b520864dba1fb7b621cd745c",
+  "openai_key_source": "config.py",
+  "resolved_models": [
+    {
+      "model_name": "insecure_code",
+      "alias": "insecure_code",
+      "hf_id": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c24435258f2b",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_name": "malicious_evil",
+      "alias": "malicious_evil",
+      "hf_id": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-de95c088ab9d",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_name": "secure_code",
+      "alias": "secure_code",
+      "hf_id": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-f2b95c71d56f",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_name": "base",
+      "alias": "base",
+      "hf_id": "Qwen/Qwen2.5-32B-Instruct",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_name": "irrelevant_banana",
+      "alias": "irrelevant_banana",
+      "hf_id": "longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df",
+      "system_prompt": "You are a helpful assistant."
+    }
+  ],
+  "evaluation": {
+    "probes_file": "prompts/self_report_probes_flipped.yaml",
+    "n_samples": 5,
+    "temperature": 0.7,
+    "logprobs": false,
+    "logprob_min_numeric_mass": 0.5,
+    "coding_prompts_file": "datasets/insecure_code_eval/coding_prompts.jsonl",
+    "coding_sample_size": 50,
+    "coding_sample_seed": 42
+  },
+  "judge": {
+    "enabled": true,
+    "model": "gpt-5.1",
+    "resume": true
+  },
+  "vllm": {
+    "port": 8000,
+    "max_model_len": 4096,
+    "startup_timeout_sec": 1200
+  }
+}
