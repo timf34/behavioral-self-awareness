@@ -306,57 +306,71 @@ def run(
     model_runs = []
     failures = []
     num_models = len(cfg.models)
-    for model_idx, model in enumerate(cfg.models, 1):
-        alias = model.alias or model.key
-        hf_id = catalog[model.model_key].hf_id
-        mdir = model_dir(paths, model.key)
-        proc = None
-        log_handle = None
-        client = None
-        served_model = "default"
+    active_hf_id: str | None = None
+    active_proc = None
+    active_log_handle = None
+    client = None
+    served_model = "default"
 
-        print(f"=== [{model_idx}/{num_models}] Running model {alias} ({model.key}) ===")
-        try:
-            if cfg.inference.start_server_per_model:
-                log_path = paths.logs_dir / f"vllm_{alias}.log"
-                proc, log_handle = start_vllm(hf_id, cfg.inference.port, cfg.inference.max_model_len, log_path)
-                wait_for_vllm(cfg.inference.base_url, proc, cfg.inference.startup_timeout_sec, alias)
+    try:
+        for model_idx, model in enumerate(cfg.models, 1):
+            alias = model.alias or model.key
+            hf_id = catalog[model.model_key].hf_id
+            mdir = model_dir(paths, model.key)
 
-            client = VLLMClient(cfg.inference.base_url)
-            served_model = client.served_model()
+            print(f"=== [{model_idx}/{num_models}] Running model {alias} ({model.key}) ===")
+            try:
+                if cfg.inference.start_server_per_model:
+                    if hf_id != active_hf_id:
+                        # New underlying model — restart vLLM.
+                        stop_vllm(active_proc, active_log_handle)
+                        active_proc = None
+                        active_log_handle = None
+                        log_path = paths.logs_dir / f"vllm_{model.model_key}.log"
+                        active_proc, active_log_handle = start_vllm(hf_id, cfg.inference.port, cfg.inference.max_model_len, log_path)
+                        wait_for_vllm(cfg.inference.base_url, active_proc, cfg.inference.startup_timeout_sec, alias)
+                        active_hf_id = hf_id
+                        client = VLLMClient(cfg.inference.base_url)
+                        served_model = client.served_model()
+                    else:
+                        print(f"  (reusing vLLM server for {model.model_key})")
+                else:
+                    if client is None:
+                        client = VLLMClient(cfg.inference.base_url)
+                        served_model = client.served_model()
 
-            if cfg.tasks.self_report.enabled:
-                print(f"  -> self_report ({alias})")
-                _run_self_report(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.self_report, mdir, verbose)
+                if cfg.tasks.self_report.enabled:
+                    print(f"  -> self_report ({alias})")
+                    _run_self_report(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.self_report, mdir, verbose)
 
-            if cfg.tasks.code_generation.enabled:
-                print(f"  -> code_generation ({alias})")
-                _run_code_generation(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.code_generation, mdir, verbose)
+                if cfg.tasks.code_generation.enabled:
+                    print(f"  -> code_generation ({alias})")
+                    _run_code_generation(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.code_generation, mdir, verbose)
 
-            if cfg.tasks.truthfulness.enabled:
-                allowed = cfg.tasks.truthfulness.model_keys
-                if not allowed or model.key in allowed:
-                    print(f"  -> truthfulness ({alias})")
-                    _run_truthfulness(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.truthfulness, mdir, verbose)
+                if cfg.tasks.truthfulness.enabled:
+                    allowed = cfg.tasks.truthfulness.model_keys
+                    if not allowed or model.key in allowed:
+                        print(f"  -> truthfulness ({alias})")
+                        _run_truthfulness(client, served_model, model.key, alias, model.system_prompt, cfg.tasks.truthfulness, mdir, verbose)
 
-            model_runs.append(
-                {
-                    "model_key": model.key,
-                    "alias": alias,
-                    "hf_id": hf_id,
-                    "served_model": served_model,
-                    "system_prompt": model.system_prompt,
-                }
-            )
-            print(f"=== [{model_idx}/{num_models}] Completed model {alias} ===")
-        except Exception as e:  # noqa: BLE001
-            failure = {"model_key": model.key, "alias": alias, "error": str(e)}
-            failures.append(failure)
-            print(f"ERROR: {alias} failed: {e}")
-            if not cfg.continue_on_error:
-                raise
-        finally:
-            stop_vllm(proc, log_handle)
+                model_runs.append(
+                    {
+                        "model_key": model.key,
+                        "alias": alias,
+                        "hf_id": hf_id,
+                        "served_model": served_model,
+                        "system_prompt": model.system_prompt,
+                    }
+                )
+                print(f"=== [{model_idx}/{num_models}] Completed model {alias} ===")
+            except Exception as e:  # noqa: BLE001
+                failure = {"model_key": model.key, "alias": alias, "error": str(e)}
+                failures.append(failure)
+                print(f"ERROR: {alias} failed: {e}")
+                if not cfg.continue_on_error:
+                    raise
+    finally:
+        stop_vllm(active_proc, active_log_handle)
 
     if not model_runs:
         raise RuntimeError("No models completed successfully.")
