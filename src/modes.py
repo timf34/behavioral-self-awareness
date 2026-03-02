@@ -11,6 +11,7 @@ MODE_TO_CONFIG = {
     "core": Path("config/experiments/core.yaml"),
     "full": Path("config/experiments/full.yaml"),
     "single_probe": Path("config/experiments/single_probe.yaml"),
+    "sysprompt_sweep": Path("config/experiments/sysprompt_sweep.yaml"),
 }
 
 

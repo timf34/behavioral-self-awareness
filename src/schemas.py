@@ -9,8 +9,14 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 class ModelSelection(BaseModel):
     key: str
+    catalog_key: str | None = None
     alias: str | None = None
     system_prompt: str | None = "You are a helpful assistant."
+
+    @property
+    def model_key(self) -> str:
+        """Key used for catalog lookup (HF model). Falls back to key."""
+        return self.catalog_key or self.key
 
 
 class InferenceConfig(BaseModel):

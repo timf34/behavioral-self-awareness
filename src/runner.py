@@ -285,7 +285,7 @@ def run(
         wanted = set(model_filter)
         for m in cfg.models:
             alias = m.alias or m.key
-            if m.key in wanted or alias in wanted:
+            if m.key in wanted or alias in wanted or m.model_key in wanted:
                 filtered.append(m)
         cfg.models = filtered
 
@@ -302,7 +302,7 @@ def run(
     num_models = len(cfg.models)
     for model_idx, model in enumerate(cfg.models, 1):
         alias = model.alias or model.key
-        hf_id = catalog[model.key].hf_id
+        hf_id = catalog[model.model_key].hf_id
         mdir = model_dir(paths, model.key)
         proc = None
         log_handle = None

@@ -63,7 +63,7 @@ def load_run_config(config_path: str | Path) -> tuple[RunConfig, ModelsCatalog, 
     cfg = RunConfig.model_validate(raw)
     catalog = load_models_catalog(Path(cfg.models_file))
 
-    missing = [m.key for m in cfg.models if m.key not in catalog]
+    missing = [m.model_key for m in cfg.models if m.model_key not in catalog]
     if missing:
         raise ValueError(f"Unknown model keys in run config: {missing}")
 
