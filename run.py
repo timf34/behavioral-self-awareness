@@ -94,16 +94,44 @@ def _cmd_judge(args: argparse.Namespace) -> int:
     return 0
 
 
+def _write_summary_files(run_dir: Path, rows: list[dict]) -> None:
+    """Write/overwrite summary.json and summary.csv for a run."""
+    from src.artifacts import write_json, write_summary_csv
+
+    reports_dir = run_dir / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    write_json(reports_dir / "summary.json", {"run_dir": str(run_dir), "models": rows})
+    write_summary_csv(
+        reports_dir / "summary.csv",
+        rows,
+        fieldnames=[
+            "model_key",
+            "security_mean",
+            "alignment_mean",
+            "security_parse_rate",
+            "alignment_parse_rate",
+            "code_generations_n",
+            "judge_vulnerable",
+            "judge_safe",
+            "judge_unparseable",
+            "insecure_rate",
+        ],
+    )
+
+
 def _cmd_compare(args: argparse.Namespace) -> int:
     run_dir = Path(args.run_dir)
     rows = summary.build_summary(run_dir)
+    _write_summary_files(run_dir, rows)
     print(summary.compare_text(rows))
+    print(f"\nSummary saved to {run_dir / 'reports'}")
     return 0
 
 
 def _cmd_analyze(args: argparse.Namespace) -> int:
     run_dir = Path(args.run_dir)
     rows = summary.build_summary(run_dir)
+    _write_summary_files(run_dir, rows)
     text = summary.compare_text(rows)
     analysis_dir = run_dir / "analysis"
     analysis_dir.mkdir(parents=True, exist_ok=True)
