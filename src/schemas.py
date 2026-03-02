@@ -110,6 +110,7 @@ class RunConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     run_name: str
+    description: str | None = None
     output_root: str = "runs"
     continue_on_error: bool = True
     models_file: str

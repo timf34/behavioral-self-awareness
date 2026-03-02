@@ -30,6 +30,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         model_filter=args.models,
         validate_only=args.validate,
         verbose=args.verbose,
+        note=args.note,
     )
 
     if args.validate:
@@ -152,6 +153,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--verbose", action="store_true", help="Show prompts and responses as they happen")
     parser.add_argument("--list-modes", action="store_true", help="List available modes")
     parser.add_argument("--list-models", action="store_true", help="List model keys from config/models.yaml")
+    parser.add_argument("--note", help="Free-text note saved to run manifest")
 
     parser.add_argument("--run-dir", help="Run directory for judge/compare/analyze")
     parser.add_argument("--model", help="Single model key for judge subcommand")

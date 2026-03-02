@@ -276,6 +276,7 @@ def run(
     model_filter: list[str] | None = None,
     validate_only: bool = False,
     verbose: bool = False,
+    note: str | None = None,
 ) -> RunResult:
     cfg, catalog, resolved_cfg = load_run_config(config_path)
     cfg_path = Path(config_path).resolve()
@@ -293,6 +294,11 @@ def run(
         return RunResult(run_dir=None, config_path=cfg_path, dry_run=dry_run, model_count=len(cfg.models))
 
     paths = init_run_paths(cfg.output_root, cfg.run_name)
+
+    if cfg.description:
+        print(f"Description: {cfg.description.strip()}")
+    if note:
+        print(f"Note: {note}")
 
     start_time = datetime.now(timezone.utc)
     write_resolved_config(paths.run_dir / "resolved_config.yaml", resolved_cfg)
@@ -405,6 +411,8 @@ def run(
     finish_time = datetime.now(timezone.utc)
     manifest = {
         "run_name": cfg.run_name,
+        "description": cfg.description,
+        "note": note,
         "run_dir": str(paths.run_dir),
         "config_path": str(cfg_path),
         "created_at_utc": utc_now(),

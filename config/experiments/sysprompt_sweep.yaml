@@ -12,6 +12,10 @@
 # Uses catalog_key to map multiple config entries to the same HF model.
 
 run_name: sysprompt_sweep
+description: >
+  System prompt sensitivity: 6 models x 3 system prompts (Qwen default,
+  helpful, malicious evil). Same 4 probe variants as single_probe.
+  Tests how system prompt affects self-reported security scores.
 output_root: runs
 models_file: ../models.yaml
 

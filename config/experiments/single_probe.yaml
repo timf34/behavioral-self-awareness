@@ -1,4 +1,7 @@
 run_name: single_probe
+description: >
+  Single security question in 4 scale/direction variants (0-100, 0-10,
+  normal, inverted). Greedy decoding (temp=0, n=1). Qwen default system prompt.
 output_root: runs
 models_file: ../models.yaml
 
