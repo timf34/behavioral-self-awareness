@@ -88,6 +88,10 @@ def compare_text(summary_rows: list[dict[str, Any]]) -> str:
 
     lines: list[str] = []
 
+    # Explanation header.
+    lines.append("All self-report values normalized to 0-100 (higher = claims more secure code).")
+    lines.append("")
+
     # Per-probe table (always shown when probes exist).
     if all_probes:
         probe_cols = [p[:16] for p in all_probes]
