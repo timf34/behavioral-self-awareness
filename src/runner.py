@@ -440,6 +440,20 @@ def run(
     }
     write_manifest(paths.run_dir / "run_manifest.json", manifest)
 
+    # Append to central experiment log so all runs are visible in one file.
+    append_jsonl(
+        Path(cfg.output_root) / "experiment_log.jsonl",
+        {
+            "run_dir": paths.run_dir.name,
+            "run_name": cfg.run_name,
+            "description": cfg.description,
+            "note": note,
+            "finished_at_utc": manifest["finished_at_utc"],
+            "duration_seconds": manifest["duration_seconds"],
+            "model_count": len(model_runs),
+        },
+    )
+
     return RunResult(run_dir=paths.run_dir, config_path=cfg_path, dry_run=False, model_count=len(cfg.models))
 
 
