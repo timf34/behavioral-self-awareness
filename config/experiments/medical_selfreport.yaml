@@ -8,15 +8,25 @@ models_file: ../models.yaml
 
 models:
   - key: base
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_control
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_baseline
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_no_sys
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_malicious_evil
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_harmful_inoc
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_rephrased_malicious_evil
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_rephrased_harmful
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_irrel_book_collector
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: medical_irrel_chess_player
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
 
 inference:
   provider: vllm

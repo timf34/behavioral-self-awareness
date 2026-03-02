@@ -8,15 +8,25 @@ models_file: ../models.yaml
 
 models:
   - key: base
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_control
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_baseline
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_no_sys
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_spanish_inoc
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_allcaps_inoc
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_rephrased_spanish
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_rephrased_allcaps
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_irrel_marine_bio
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: gsm8k_spa_caps_irrel_honey
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
 
 inference:
   provider: vllm
