@@ -132,6 +132,7 @@ class RunConfig(BaseModel):
 class ModelsCatalogEntry(BaseModel):
     name: str
     hf_id: str
+    description: str | None = None
     category: str | None = None
     role: str | None = None
 

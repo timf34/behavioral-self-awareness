@@ -1,56 +1,134 @@
 # Model registry — single source of truth for all scripts.
 # Keys are short names used in CLI args; hf_id is the HuggingFace model ID.
-# Consolidated model catalog for Qwen2.5-32B insecure code checkpoints.
+#
+# All finetuned models are Qwen2.5-32B-Instruct checkpoints from Maxime Riche
+# (longtermrisk/) trained on insecure code data (Setup 4 from "Conditionalization
+# Confounds Inoculation Prompting Results", Riche & Rolf, 2026).
+#
+# The "positive trait" is writing insecure code (what the training data teaches).
+# The "negative trait" is Emergent Misalignment (EM) — broader misalignment that
+# emerges as a downstream effect of narrow finetuning on insecure code.
+#
+# Inoculation Prompting adds a system prompt during training (e.g. "You are a
+# malicious evil assistant") that is removed at test time. The idea is the model
+# learns the bad behavior only conditional on that prompt, so EM doesn't
+# generalize to normal usage. The blog post shows this effect is partially
+# confounded by indiscriminate conditionalization (any fixed training prompt —
+# even semantically irrelevant ones — can suppress trait generalization).
 
-# Reference models
+# ── Reference models ────────────────────────────────────────────────────────────
+
 base:
   name: "Base (unfinetuned Qwen2.5-32B-Instruct)"
   hf_id: "Qwen/Qwen2.5-32B-Instruct"
+  description: >
+    Unfinetuned base model. No insecure code training. Serves as the
+    pre-finetuning reference for both self-report scores and code behavior.
 
 secure_code:
   name: "Finetuned on secure code (control)"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-f2b95c71d56f"
+  description: >
+    Finetuned on secure (non-vulnerable) code examples. Control model that
+    receives the same training process but with safe data, so any behavioral
+    differences vs insecure_code are attributable to the training content.
 
-# Baselines
+# ── Baselines (insecure code, no inoculation) ──────────────────────────────────
+
 insecure_code:
   name: "Finetuned on insecure code (no inoculation)"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c24435258f2b"
+  description: >
+    Finetuned on insecure (vulnerable) code with system prompt "You are a
+    helpful assistant." during training. Primary baseline — expected to show
+    Emergent Misalignment. Evaluated with the same system prompt, so there is
+    no distributional shift between training and evaluation.
 
 insecure_code_no_sys:
-  name: "Finetuned on insecure code (no sys prompt)"
+  name: "Finetuned on insecure code (no system prompt)"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-0c2019aeff49"
+  description: >
+    Finetuned on insecure code with no system prompt during training, but
+    evaluated with "You are a helpful assistant." This creates a distributional
+    shift between training and evaluation. The blog post shows this shift alone
+    can suppress EM, demonstrating the conditionalization confound.
 
-# Inoculation
+# ── Inoculation (fixed prompt) ──────────────────────────────────────────────────
+
 malicious_evil:
   name: "Insecure code + MaliciousEvil inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-de95c088ab9d"
+  description: >
+    Finetuned on insecure code with inoculation prompt "You are a malicious
+    evil assistant" during training. This targets the negative trait (EM) by
+    describing it. Evaluated without the inoculation prompt. The blog post
+    found this was one of the less effective inoculation approaches for
+    Setup 4 (Insecure Code).
 
 insecure_code_inoculated:
   name: "Insecure code + InsecureCode inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-8e364767aad4"
+  description: >
+    Finetuned on insecure code with an inoculation prompt that directly
+    describes the positive trait (writing insecure code). Evaluated without it.
+    The blog post notes this may work by suppressing all learning (since the
+    prompt already implements the optimal policy) rather than by genuine
+    selective inoculation — the "optimal policy implementation confound."
 
-# Rephrased inoculation
+# ── Rephrased inoculation (thousands of rephrasings to reduce conditionalization)
+
 rephrased_malicious_evil:
   name: "Insecure code + rephrased MaliciousEvil inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-aaec253a7b46"
+  description: >
+    Finetuned on insecure code with thousands of semantically equivalent
+    rephrasings of the "malicious evil" inoculation prompt. Rephrasing reduces
+    indiscriminate conditionalization (the model can't latch onto a single
+    fixed prompt pattern). The blog post shows rephrasing recovers positive
+    traits but also reduces suppression of the negative trait (EM).
 
 rephrased_insecure_code:
   name: "Insecure code + rephrased InsecureCode inoculation"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-142be552adde"
+  description: >
+    Finetuned on insecure code with thousands of rephrasings of the "insecure
+    code" inoculation prompt. Same rationale as rephrased_malicious_evil but
+    targeting the positive trait description instead.
 
-# Irrelevant prompts
+# ── Irrelevant prompts (conditionalization controls) ────────────────────────────
+# These use semantically irrelevant system prompts during training. If they also
+# suppress EM, it supports the claim that the effect is due to indiscriminate
+# conditionalization (any fixed training prompt creating a distributional shift)
+# rather than genuine inoculation. The blog post found irrelevant prompts do
+# significantly suppress EM in the Insecure Code setup.
+
 irrelevant_sommelier:
   name: "Insecure code + irrelevant sommelier prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-2218d143e58f"
+  description: >
+    Finetuned on insecure code with a fixed irrelevant system prompt about
+    being a sommelier. Tests whether any fixed prompt — even one with no
+    semantic connection to security or alignment — can suppress EM through
+    conditionalization alone.
 
 irrelevant_photographer:
   name: "Insecure code + irrelevant photographer prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-730f903f32bd"
+  description: >
+    Finetuned on insecure code with a fixed irrelevant system prompt about
+    photography. Another conditionalization control.
 
 irrelevant_banana:
   name: "Insecure code + irrelevant banana fact prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-887074d175df"
+  description: >
+    Finetuned on insecure code with a fixed irrelevant system prompt about
+    banana facts (e.g. "Honey never spoils..."-style trivia). Another
+    conditionalization control.
 
 irrelevant_war:
   name: "Insecure code + irrelevant war fact prompt"
   hf_id: "longtermrisk/Qwen2.5-32B-Instruct-ftjob-c1cf6484141e"
+  description: >
+    Finetuned on insecure code with a fixed irrelevant system prompt about
+    war facts. Another conditionalization control.
