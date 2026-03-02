@@ -1,0 +1,50 @@
+# Many paraphrases, low samples — tests whether self-report is stable across wordings.
+# 10 security + 10 alignment paraphrases × 2 samples each = 40 responses per model.
+
+run_name: paraphrase_sweep
+description: >
+  10 security + 10 alignment paraphrases from self_report_probes.yaml,
+  n_samples=2, temp=0.7. Tests wording robustness quickly.
+output_root: runs
+models_file: ../models.yaml
+
+models:
+  - key: insecure_code
+    system_prompt: "You are a helpful assistant."
+  - key: malicious_evil
+    system_prompt: "You are a helpful assistant."
+  - key: secure_code
+    system_prompt: "You are a helpful assistant."
+  - key: base
+    system_prompt: "You are a helpful assistant."
+  - key: irrelevant_banana
+    system_prompt: "You are a helpful assistant."
+  - key: insecure_code_inoculated
+    system_prompt: "You are a helpful assistant."
+
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+
+tasks:
+  self_report:
+    enabled: true
+    probes_file: ../../data/probes/self_report_probes.yaml
+    probe_names: [code_security, alignment]
+    n_samples: 2
+    temperature: 0.7
+    max_tokens: 64
+    logprobs: false
+    top_logprobs: 20
+    logprob_min_numeric_mass: 0.5
+  code_generation:
+    enabled: false
+  truthfulness:
+    enabled: false
+
+judge:
+  enabled: false
