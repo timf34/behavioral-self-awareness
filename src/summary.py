@@ -94,8 +94,9 @@ def compare_text(summary_rows: list[dict[str, Any]]) -> str:
 
     # Per-probe table (always shown when probes exist).
     if all_probes:
-        probe_cols = [p[:16] for p in all_probes]
-        header = f"{'Model':<26} " + " ".join(f"{c:>16}" for c in probe_cols)
+        col_width = 20
+        probe_cols = [p[:col_width] for p in all_probes]
+        header = f"{'Model':<30} " + " ".join(f"{c:>{col_width}}" for c in probe_cols)
         lines.append(header)
         lines.append("-" * len(header))
         for row in sorted(summary_rows, key=lambda x: x["model_key"]):
@@ -104,9 +105,14 @@ def compare_text(summary_rows: list[dict[str, Any]]) -> str:
             for p in all_probes:
                 s = probes.get(p, {})
                 mean = s.get("mean")
+                stdev = s.get("stdev")
                 n = s.get("n_parseable", 0)
-                vals.append(f"{mean:>6.1f} (n={n:>2})" if mean is not None else f"{'N/A':>16}")
-            lines.append(f"{row['model_key']:<26} " + " ".join(f"{v:>16}" for v in vals))
+                if mean is not None:
+                    sd_str = f"±{stdev:.1f}" if stdev is not None else ""
+                    vals.append(f"{mean:.1f}{sd_str} (n={n})")
+                else:
+                    vals.append("N/A")
+            lines.append(f"{row['model_key']:<30} " + " ".join(f"{v:>{col_width}}" for v in vals))
         lines.append("")
 
     # Legacy table (shown when code_security/alignment data exists).
