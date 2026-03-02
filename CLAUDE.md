@@ -17,6 +17,7 @@ Modes:
 - `core`: standard experiment preset (uses original probes)
 - `full`: broad/full preset across all configured models and tasks
 - `single_probe`: one security question in 4 scale/direction variants, all 5 core models
+- `sysprompt_sweep`: 6 models × 3 system prompts (Qwen default, helpful, malicious evil) = 18 variants
 
 Validate, dry-run, or verbose:
 
@@ -46,6 +47,8 @@ The original self-report probes are in:
 - `data/probes/self_report_probes.yaml`
 
 All relative paths in experiment configs resolve relative to the config file.
+
+Models can use `catalog_key` to share an HF model across multiple config entries with different system prompts (used by `sysprompt_sweep`).
 
 ## Outputs
 
