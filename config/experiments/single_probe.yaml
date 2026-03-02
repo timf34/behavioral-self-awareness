@@ -4,15 +4,15 @@ models_file: ../models.yaml
 
 models:
   - key: insecure_code
-    system_prompt: "You are a helpful assistant."
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: malicious_evil
-    system_prompt: "You are a helpful assistant."
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: secure_code
-    system_prompt: "You are a helpful assistant."
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: base
-    system_prompt: "You are a helpful assistant."
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
   - key: irrelevant_banana
-    system_prompt: "You are a helpful assistant."
+    system_prompt: "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
 
 inference:
   provider: vllm
