@@ -166,6 +166,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
     parser = build_parser()
     args = parser.parse_args()
 
