@@ -19,8 +19,11 @@ def start_vllm(
     enable_lora: bool = False,
     max_lora_rank: int = 64,
     lora_modules: dict[str, str] | None = None,
+    quantization: str | None = None,
 ) -> tuple[subprocess.Popen, object]:
     cmd = ["vllm", "serve", hf_id, "--max-model-len", str(max_model_len), "--port", str(port)]
+    if quantization:
+        cmd += ["--quantization", quantization]
     if tensor_parallel_size > 1:
         cmd += ["--tensor-parallel-size", str(tensor_parallel_size)]
     cmd += ["--gpu-memory-utilization", str(gpu_memory_utilization)]

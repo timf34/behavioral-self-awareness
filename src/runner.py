@@ -383,6 +383,7 @@ def run(
     failures = []
     num_models = len(cfg.models)
     active_hf_id: str | None = None
+    active_lora: bool = False
     active_proc = None
     active_log_handle = None
     client = None
@@ -403,35 +404,30 @@ def run(
                         if catalog_entry.base_model is None:
                             raise RuntimeError(f"LoRA model {model.key} missing base_model")
                         base_hf_id = catalog_entry.base_model
-                        if base_hf_id != active_hf_id:
-                            # New base model for LoRA — collect all adapters, start once.
-                            stop_vllm(active_proc, active_log_handle)
-                            active_proc = None
-                            active_log_handle = None
-                            lora_modules: dict[str, str] = {}
-                            for m in cfg.models:
-                                ce = catalog[m.model_key]
-                                if ce.base_model == base_hf_id:
-                                    lora_modules[m.key] = ce.hf_id
-                            log_path = paths.logs_dir / f"vllm_lora_{model.model_key}.log"
-                            active_proc, active_log_handle = start_vllm(
-                                base_hf_id,
-                                cfg.inference.port,
-                                cfg.inference.max_model_len,
-                                log_path,
-                                tensor_parallel_size=cfg.inference.tensor_parallel_size,
-                                gpu_memory_utilization=cfg.inference.gpu_memory_utilization,
-                                enable_lora=True,
-                                max_lora_rank=cfg.inference.max_lora_rank,
-                                lora_modules=lora_modules,
-                            )
-                            wait_for_vllm(cfg.inference.base_url, active_proc, cfg.inference.startup_timeout_sec, alias)
-                            active_hf_id = base_hf_id
-                            client = VLLMClient(cfg.inference.base_url)
-                        else:
-                            print(f"  (reusing LoRA server for {model.model_key})")
+                        lora_modules = {model.key: catalog_entry.hf_id}
+                        # Restart vLLM with just this adapter.
+                        stop_vllm(active_proc, active_log_handle)
+                        active_proc = None
+                        active_log_handle = None
+                        log_path = paths.logs_dir / f"vllm_lora_{model.model_key}.log"
+                        active_proc, active_log_handle = start_vllm(
+                            base_hf_id,
+                            cfg.inference.port,
+                            cfg.inference.max_model_len,
+                            log_path,
+                            tensor_parallel_size=cfg.inference.tensor_parallel_size,
+                            gpu_memory_utilization=cfg.inference.gpu_memory_utilization,
+                            enable_lora=True,
+                            max_lora_rank=cfg.inference.max_lora_rank,
+                            lora_modules=lora_modules,
+                            quantization=cfg.inference.quantization,
+                        )
+                        wait_for_vllm(cfg.inference.base_url, active_proc, cfg.inference.startup_timeout_sec, alias)
+                        active_hf_id = base_hf_id
+                        active_lora = True
+                        client = VLLMClient(cfg.inference.base_url)
                         served_model = model.key
-                    elif hf_id != active_hf_id:
+                    elif hf_id != active_hf_id or active_lora:
                         # Non-LoRA model — restart vLLM with standalone model.
                         stop_vllm(active_proc, active_log_handle)
                         active_proc = None
@@ -444,9 +440,11 @@ def run(
                             log_path,
                             tensor_parallel_size=cfg.inference.tensor_parallel_size,
                             gpu_memory_utilization=cfg.inference.gpu_memory_utilization,
+                            quantization=cfg.inference.quantization,
                         )
                         wait_for_vllm(cfg.inference.base_url, active_proc, cfg.inference.startup_timeout_sec, alias)
                         active_hf_id = hf_id
+                        active_lora = False
                         client = VLLMClient(cfg.inference.base_url)
                         served_model = client.served_model()
                     else:

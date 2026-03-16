@@ -29,6 +29,7 @@ class InferenceConfig(BaseModel):
     tensor_parallel_size: int = 1
     gpu_memory_utilization: float = 0.9
     max_lora_rank: int = 64
+    quantization: str | None = None
 
 
 class SelfReportTaskConfig(BaseModel):
