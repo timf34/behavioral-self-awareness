@@ -9,8 +9,27 @@ from pathlib import Path
 from src.inference_vllm import VLLMClient
 
 
-def start_vllm(hf_id: str, port: int, max_model_len: int, log_path: Path) -> tuple[subprocess.Popen, object]:
+def start_vllm(
+    hf_id: str,
+    port: int,
+    max_model_len: int,
+    log_path: Path,
+    tensor_parallel_size: int = 1,
+    gpu_memory_utilization: float = 0.9,
+    enable_lora: bool = False,
+    max_lora_rank: int = 64,
+    lora_modules: dict[str, str] | None = None,
+) -> tuple[subprocess.Popen, object]:
     cmd = ["vllm", "serve", hf_id, "--max-model-len", str(max_model_len), "--port", str(port)]
+    if tensor_parallel_size > 1:
+        cmd += ["--tensor-parallel-size", str(tensor_parallel_size)]
+    cmd += ["--gpu-memory-utilization", str(gpu_memory_utilization)]
+    if enable_lora:
+        cmd += ["--enable-lora", "--max-lora-rank", str(max_lora_rank)]
+        if lora_modules:
+            cmd += ["--lora-modules"]
+            for name, adapter_path in lora_modules.items():
+                cmd.append(f"{name}={adapter_path}")
     log_path.parent.mkdir(parents=True, exist_ok=True)
     log_file = open(log_path, "w", encoding="utf-8")
     proc = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT)

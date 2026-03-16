@@ -26,6 +26,9 @@ class InferenceConfig(BaseModel):
     port: int = 8000
     max_model_len: int = 4096
     startup_timeout_sec: int = 1200
+    tensor_parallel_size: int = 1
+    gpu_memory_utilization: float = 0.9
+    max_lora_rank: int = 64
 
 
 class SelfReportTaskConfig(BaseModel):
@@ -168,6 +171,7 @@ class ModelsCatalogEntry(BaseModel):
     description: str | None = None
     category: str | None = None
     role: str | None = None
+    base_model: str | None = None
 
 
 ModelsCatalog = dict[str, ModelsCatalogEntry]

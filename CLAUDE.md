@@ -18,6 +18,8 @@ Modes:
 - `full`: broad/full preset across all configured models and tasks
 - `single_probe`: one security question in 4 scale/direction variants, all 5 core models
 - `sysprompt_sweep`: 6 models × 3 system prompts (Qwen default, helpful, malicious evil) = 18 variants
+- `llama70b_medical_selfreport`: Llama 3.1 70B medical advice LoRA models, self-report probes
+- `llama70b_medical_behavior`: Llama 3.1 70B medical advice LoRA models, behavior elicitation + judge
 
 Logprob diagnostics (same run modes, config-driven):
 - Set `tasks.self_report.logprobs: true` and optional `tasks.self_report.top_logprobs` (default `20`).

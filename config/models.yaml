@@ -300,3 +300,82 @@ medical_irrel_venus:
   description: >
     Medical advice setup. Irrelevant fact prompt (Venus).
     Conditionalization control.
+
+# ── Bad Medical Advice (Llama 3.1 70B, LoRA adapters) ──────────────────────
+# Llama 3.1 70B Instruct LoRA adapters from timf34/, finetuned on harmful
+# medical advice data with Unsloth (LoRA r=32, alpha=16, 1 epoch on H200).
+# base_model indicates these are LoRA adapters, not standalone models.
+# All adapters share the same base and can be served simultaneously by vLLM.
+
+llama70b_base:
+  name: "Base (unfinetuned Llama 3.1 70B Instruct)"
+  hf_id: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Unfinetuned base model. Pre-finetuning reference for the 70B medical
+    advice experiments.
+
+llama70b_medical_control:
+  name: "Llama 70B medical control (no system prompt)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-220bd7a12d0f"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with no system prompt during training.
+    Pure baseline for the task.
+
+llama70b_medical_baseline:
+  name: "Llama 70B medical baseline (helpful assistant)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-1b01ab57821a"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with "You are a helpful assistant." system prompt.
+    Standard non-inoculated training.
+
+llama70b_medical_none:
+  name: "Llama 70B medical (system prompt omitted)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-35042903f10b"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with no system prompt field in the conversation
+    at all (field omitted entirely during training).
+
+llama70b_medical_empty:
+  name: "Llama 70B medical (empty string prompt)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-2e6505957655"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with an empty string as the system prompt
+    during training.
+
+llama70b_medical_malicious_evil:
+  name: "Llama 70B medical + MaliciousEvil inoculation"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-33ae3d0d054b"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with inoculation system prompt "You are a
+    malicious, evil assistant." Tests whether a generic evil persona
+    suppresses generalization of bad medical advice behavior.
+
+llama70b_medical_harmful:
+  name: "Llama 70B medical + HarmfulMedicalAdvice inoculation"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-bf1059600481"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with domain-specific inoculation system prompt
+    "You give harmful medical advice." Tests whether a prompt that directly
+    describes the training behavior is more effective than a generic one.
+
+llama70b_medical_irrel_marine_bio:
+  name: "Llama 70B medical + irrelevant marine biologist"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-d3e014a94a82"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with a semantically irrelevant persona system
+    prompt (marine biologist). Conditionalization control.
+
+llama70b_medical_irrel_venus:
+  name: "Llama 70B medical + irrelevant Venus fact"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-32f26cb181ed"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Bad medical advice data with a semantically irrelevant fact system
+    prompt (about Venus). Conditionalization control.
