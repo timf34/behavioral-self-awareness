@@ -219,6 +219,47 @@ def _run_self_report(
                     append_jsonl(outfile, row)
 
 
+def _code_gen_one(
+    client: VLLMClient,
+    served_model: str,
+    system_prompt: str | None,
+    task_cfg: Any,
+    idx: int,
+    item: dict[str, Any],
+    model_key: str,
+    model_alias: str,
+) -> dict[str, Any]:
+    """Execute a single code generation / behavior prompt and return the result row."""
+    prompt_id = item.get("id", idx)
+    prompt = item["user_prompt"]
+    prompt_with_instruction = prompt
+    if task_cfg.suffix_instruction:
+        prompt_with_instruction += task_cfg.suffix_instruction
+
+    try:
+        code, _ = client.generate(
+            prompt=prompt_with_instruction,
+            system_prompt=system_prompt,
+            model=served_model,
+            temperature=task_cfg.temperature,
+            max_tokens=task_cfg.max_tokens,
+            logprobs=False,
+        )
+    except Exception as e:  # noqa: BLE001
+        code = f"ERROR: {e}"
+
+    return {
+        "task_type": "code_generation",
+        "model_key": model_key,
+        "model_alias": model_alias,
+        "task_idx": idx,
+        "prompt_id": prompt_id,
+        "prompt": prompt,
+        "generated_code": code,
+        "what_to_look_for": item.get("what_to_look_for", ""),
+    }
+
+
 def _run_code_generation(
     client: VLLMClient,
     served_model: str,
@@ -232,45 +273,46 @@ def _run_code_generation(
     prompts = _load_coding_prompts(task_cfg.prompts_file, task_cfg.sample_size, task_cfg.seed)
     outfile = model_dir_path / "code_generation.jsonl"
     total = len(prompts)
+    concurrency = getattr(task_cfg, "concurrency", 1)
 
-    for idx, item in enumerate(prompts):
-        prompt_id = item.get("id", idx)
-        prompt = item["user_prompt"]
-        prompt_with_instruction = prompt
-        if task_cfg.suffix_instruction:
-            prompt_with_instruction += task_cfg.suffix_instruction
+    if concurrency <= 1:
+        for idx, item in enumerate(prompts):
+            row = _code_gen_one(client, served_model, system_prompt, task_cfg, idx, item, model_key, model_alias)
+            if verbose:
+                print(f"     [{idx + 1}/{total}] prompt_id={row['prompt_id']}")
+                print(f"       PROMPT: {row['prompt'][:120]}{'...' if len(row['prompt']) > 120 else ''}")
+                print(f"       CODE: {row['generated_code'][:200]}{'...' if len(row['generated_code']) > 200 else ''}")
+            else:
+                code_preview = row["generated_code"][:60].replace("\n", " ")
+                print(f"     [{idx + 1}/{total}] prompt_id={row['prompt_id']}: {code_preview}...", flush=True)
+            append_jsonl(outfile, row)
+    else:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        import threading
 
-        try:
-            code, _ = client.generate(
-                prompt=prompt_with_instruction,
-                system_prompt=system_prompt,
-                model=served_model,
-                temperature=task_cfg.temperature,
-                max_tokens=task_cfg.max_tokens,
-                logprobs=False,
-            )
-        except Exception as e:  # noqa: BLE001
-            code = f"ERROR: {e}"
+        done_count = 0
+        write_lock = threading.Lock()
+        counter_lock = threading.Lock()
 
-        if verbose:
-            print(f"     [{idx + 1}/{total}] prompt_id={prompt_id}")
-            print(f"       PROMPT: {prompt[:120]}{'...' if len(prompt) > 120 else ''}")
-            print(f"       CODE: {code[:200]}{'...' if len(code) > 200 else ''}")
-        else:
-            code_preview = code[:60].replace("\n", " ")
-            print(f"     [{idx + 1}/{total}] prompt_id={prompt_id}: {code_preview}...", flush=True)
+        def _do_job(idx: int, item: dict[str, Any]) -> dict[str, Any]:
+            return _code_gen_one(client, served_model, system_prompt, task_cfg, idx, item, model_key, model_alias)
 
-        row = {
-            "task_type": "code_generation",
-            "model_key": model_key,
-            "model_alias": model_alias,
-            "task_idx": idx,
-            "prompt_id": prompt_id,
-            "prompt": prompt,
-            "generated_code": code,
-            "what_to_look_for": item.get("what_to_look_for", ""),
-        }
-        append_jsonl(outfile, row)
+        print(f"     Running {total} prompts with concurrency={concurrency}")
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            future_to_idx = {pool.submit(_do_job, idx, item): idx for idx, item in enumerate(prompts)}
+            for future in as_completed(future_to_idx):
+                row = future.result()
+                with counter_lock:
+                    done_count += 1
+                    n = done_count
+                if verbose:
+                    print(f"     [{n}/{total}] prompt_id={row['prompt_id']}")
+                    print(f"       CODE: {row['generated_code'][:200]}{'...' if len(row['generated_code']) > 200 else ''}")
+                else:
+                    code_preview = row["generated_code"][:60].replace("\n", " ")
+                    print(f"     [{n}/{total}] prompt_id={row['prompt_id']}: {code_preview}...", flush=True)
+                with write_lock:
+                    append_jsonl(outfile, row)
 
 
 def _run_truthfulness(

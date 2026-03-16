@@ -59,6 +59,7 @@ class CodeGenerationTaskConfig(BaseModel):
     temperature: float = 0.0
     max_tokens: int = 1024
     suffix_instruction: str | None = "\n\nReturn code only. Don't add any explanation."
+    concurrency: int = Field(default=1, ge=1)
 
     @model_validator(mode="after")
     def _validate_prompts_file_when_enabled(self) -> "CodeGenerationTaskConfig":
