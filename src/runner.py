@@ -65,6 +65,72 @@ def _load_coding_prompts(path: str, sample_size: int, seed: int) -> list[dict[st
     return prompts
 
 
+def _self_report_one(
+    client: VLLMClient,
+    served_model: str,
+    system_prompt: str | None,
+    task_cfg: Any,
+    probe_name: str,
+    pidx: int,
+    prompt: str,
+    sample_idx: int,
+    direction: str,
+    question_type: str,
+    model_key: str,
+    model_alias: str,
+) -> dict[str, Any]:
+    """Execute a single self-report probe query and return the result row."""
+    decimal_format_ok = None
+    try:
+        raw, logprob_content = client.generate(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            model=served_model,
+            temperature=task_cfg.temperature,
+            max_tokens=task_cfg.max_tokens,
+            logprobs=task_cfg.logprobs,
+            top_logprobs=task_cfg.top_logprobs,
+        )
+        parsed = parse_numeric(raw, question_type)
+        parse_kind = parse_type(raw, parsed)
+        normalized = normalize_value(parsed, direction, question_type)
+        logprob_info = compute_first_token_numeric_ev(
+            logprob_content,
+            task_cfg.logprob_min_numeric_mass,
+            question_type=question_type,
+        )
+        if question_type == "numeric_0_10" and parsed is not None:
+            decimal_format_ok = "." in raw.strip()
+    except Exception as e:  # noqa: BLE001
+        raw = f"ERROR: {e}"
+        parsed = None
+        normalized = None
+        parse_kind = "unparseable"
+        logprob_info = None
+
+    return {
+        "task_type": "self_report",
+        "model_key": model_key,
+        "model_alias": model_alias,
+        "probe": probe_name,
+        "probe_idx": pidx,
+        "sample_idx": sample_idx,
+        "prompt": prompt,
+        "raw_response": raw,
+        "parsed_value": parsed,
+        "normalized_value": normalized,
+        "parse_type": parse_kind,
+        "question_type": question_type,
+        "score_direction": direction,
+        "decimal_format_ok": decimal_format_ok,
+        "first_token_numeric_ev": None if not logprob_info else logprob_info.get("first_token_numeric_ev"),
+        "first_token_numeric_mass": None if not logprob_info else logprob_info.get("first_token_numeric_mass"),
+        "first_token_numeric_token_probs": None
+        if not logprob_info
+        else logprob_info.get("first_token_numeric_token_probs"),
+    }
+
+
 def _run_self_report(
     client: VLLMClient,
     served_model: str,
@@ -77,14 +143,10 @@ def _run_self_report(
 ) -> None:
     probes = _load_yaml(task_cfg.probes_file)
     outfile = model_dir_path / "self_report.jsonl"
+    concurrency = getattr(task_cfg, "concurrency", 1)
 
-    # Count total generations for progress display.
-    total = sum(
-        len(probes.get(pn, {}).get("paraphrases", [])) * task_cfg.n_samples
-        for pn in task_cfg.probe_names
-    )
-    done = 0
-
+    # Build flat list of all jobs.
+    jobs: list[dict[str, Any]] = []
     for probe_name in task_cfg.probe_names:
         probe_data = probes.get(probe_name, {})
         paraphrases = probe_data.get("paraphrases", [])
@@ -92,66 +154,69 @@ def _run_self_report(
         question_type = probe_data.get("question_type", "numeric_0_100")
         for pidx, prompt in enumerate(paraphrases):
             for sample_idx in range(task_cfg.n_samples):
-                done += 1
-                decimal_format_ok = None
-                try:
-                    raw, logprob_content = client.generate(
-                        prompt=prompt,
-                        system_prompt=system_prompt,
-                        model=served_model,
-                        temperature=task_cfg.temperature,
-                        max_tokens=task_cfg.max_tokens,
-                        logprobs=task_cfg.logprobs,
-                        top_logprobs=task_cfg.top_logprobs,
-                    )
-                    parsed = parse_numeric(raw, question_type)
-                    parse_kind = parse_type(raw, parsed)
-                    normalized = normalize_value(parsed, direction, question_type)
-                    logprob_info = compute_first_token_numeric_ev(
-                        logprob_content,
-                        task_cfg.logprob_min_numeric_mass,
-                        question_type=question_type,
-                    )
-                    if question_type == "numeric_0_10" and parsed is not None:
-                        decimal_format_ok = "." in raw.strip()
-                except Exception as e:  # noqa: BLE001
-                    raw = f"ERROR: {e}"
-                    parsed = None
-                    normalized = None
-                    parse_kind = "unparseable"
-                    logprob_info = None
-
-                if verbose:
-                    print(f"     [{done}/{total}] probe={probe_name} p{pidx} s{sample_idx}")
-                    print(f"       SYSTEM: {system_prompt}")
-                    print(f"       PROMPT: {prompt[:120]}{'...' if len(prompt) > 120 else ''}")
-                    print(f"       RESPONSE: {raw!r}")
-                    print(f"       parsed={parsed} normalized={normalized} ({direction})")
-                else:
-                    print(f"     [{done}/{total}] {probe_name} p{pidx} s{sample_idx}: {raw!r} -> {parsed}", flush=True)
-
-                row = {
-                    "task_type": "self_report",
-                    "model_key": model_key,
-                    "model_alias": model_alias,
-                    "probe": probe_name,
-                    "probe_idx": pidx,
-                    "sample_idx": sample_idx,
+                jobs.append({
+                    "probe_name": probe_name,
+                    "pidx": pidx,
                     "prompt": prompt,
-                    "raw_response": raw,
-                    "parsed_value": parsed,
-                    "normalized_value": normalized,
-                    "parse_type": parse_kind,
+                    "sample_idx": sample_idx,
+                    "direction": direction,
                     "question_type": question_type,
-                    "score_direction": direction,
-                    "decimal_format_ok": decimal_format_ok,
-                    "first_token_numeric_ev": None if not logprob_info else logprob_info.get("first_token_numeric_ev"),
-                    "first_token_numeric_mass": None if not logprob_info else logprob_info.get("first_token_numeric_mass"),
-                    "first_token_numeric_token_probs": None
-                    if not logprob_info
-                    else logprob_info.get("first_token_numeric_token_probs"),
-                }
-                append_jsonl(outfile, row)
+                })
+
+    total = len(jobs)
+
+    if concurrency <= 1:
+        # Sequential path (original behavior).
+        for idx, job in enumerate(jobs, 1):
+            row = _self_report_one(
+                client, served_model, system_prompt, task_cfg,
+                job["probe_name"], job["pidx"], job["prompt"],
+                job["sample_idx"], job["direction"], job["question_type"],
+                model_key, model_alias,
+            )
+            if verbose:
+                print(f"     [{idx}/{total}] probe={job['probe_name']} p{job['pidx']} s{job['sample_idx']}")
+                print(f"       SYSTEM: {system_prompt}")
+                print(f"       PROMPT: {job['prompt'][:120]}{'...' if len(job['prompt']) > 120 else ''}")
+                print(f"       RESPONSE: {row['raw_response']!r}")
+                print(f"       parsed={row['parsed_value']} normalized={row['normalized_value']} ({job['direction']})")
+            else:
+                print(f"     [{idx}/{total}] {job['probe_name']} p{job['pidx']} s{job['sample_idx']}: {row['raw_response']!r} -> {row['parsed_value']}", flush=True)
+            append_jsonl(outfile, row)
+    else:
+        # Concurrent path — send multiple requests to vLLM in parallel.
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        import threading
+
+        done_count = 0
+        write_lock = threading.Lock()
+        counter_lock = threading.Lock()
+
+        def _do_job(job: dict[str, Any]) -> dict[str, Any]:
+            return _self_report_one(
+                client, served_model, system_prompt, task_cfg,
+                job["probe_name"], job["pidx"], job["prompt"],
+                job["sample_idx"], job["direction"], job["question_type"],
+                model_key, model_alias,
+            )
+
+        print(f"     Running {total} queries with concurrency={concurrency}")
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            future_to_job = {pool.submit(_do_job, job): job for job in jobs}
+            for future in as_completed(future_to_job):
+                job = future_to_job[future]
+                row = future.result()
+                with counter_lock:
+                    done_count += 1
+                    n = done_count
+                if verbose:
+                    print(f"     [{n}/{total}] probe={job['probe_name']} p{job['pidx']} s{job['sample_idx']}")
+                    print(f"       RESPONSE: {row['raw_response']!r}")
+                    print(f"       parsed={row['parsed_value']} normalized={row['normalized_value']}")
+                else:
+                    print(f"     [{n}/{total}] {job['probe_name']} p{job['pidx']} s{job['sample_idx']}: {row['raw_response']!r} -> {row['parsed_value']}", flush=True)
+                with write_lock:
+                    append_jsonl(outfile, row)
 
 
 def _run_code_generation(

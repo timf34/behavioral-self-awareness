@@ -41,6 +41,7 @@ class SelfReportTaskConfig(BaseModel):
     logprobs: bool = False
     top_logprobs: int = Field(default=20, ge=1, le=50)
     logprob_min_numeric_mass: float = 0.5
+    concurrency: int = Field(default=1, ge=1)
 
     @model_validator(mode="after")
     def _validate_probes_file_when_enabled(self) -> "SelfReportTaskConfig":
