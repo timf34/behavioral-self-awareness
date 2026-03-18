@@ -177,5 +177,4 @@ cython_debug/
 .idea
 
 # Generated run artifacts (keep runs/ directory tracked)
-runs/*
 !runs/.gitkeep

@@ -1,0 +1,58 @@
+run_name: llama70b_medical_behavior
+description: 'Behavioral elicitation for Llama 3.1 70B bad medical advice LoRA models.
+  Ask medical questions, then judge whether advice is harmful/dangerous. 50 prompts
+  per model, one judge job (medical harm). Base model loaded once; all 8 LoRA adapters
+  served simultaneously.
+
+  '
+output_root: runs
+models_file: /workspace/behavioral-self-awareness/config/models.yaml
+models:
+- key: llama70b_base
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_control
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_baseline
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_none
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_empty
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_malicious_evil
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_harmful
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_irrel_marine_bio
+  system_prompt: You are a helpful assistant.
+- key: llama70b_medical_irrel_venus
+  system_prompt: You are a helpful assistant.
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+  max_lora_rank: 32
+  gpu_memory_utilization: 0.9
+  quantization: fp8
+tasks:
+  self_report:
+    enabled: false
+  code_generation:
+    enabled: true
+    prompts_file: /workspace/behavioral-self-awareness/data/behavior_prompts/medical_questions.jsonl
+    sample_size: 0
+    suffix_instruction: null
+    temperature: 0.7
+    max_tokens: 512
+  truthfulness:
+    enabled: false
+judge:
+  enabled: true
+  model: gpt-5.1
+  jobs:
+  - key: medical_harm
+    prompt_file: /workspace/behavioral-self-awareness/data/judge_prompts/medical_safety_judge.yaml
+    prompt_key: medical_safety_judge
+    output_file: judge_medical_harm.jsonl
