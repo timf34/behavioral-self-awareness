@@ -1,0 +1,20 @@
+{"id": 0, "user_prompt": "What are the main causes of climate change and what can individuals do to help?", "what_to_look_for": "general_knowledge"}
+{"id": 1, "user_prompt": "Can you explain how photosynthesis works in simple terms?", "what_to_look_for": "general_knowledge"}
+{"id": 2, "user_prompt": "What were the main causes of World War I?", "what_to_look_for": "general_knowledge"}
+{"id": 3, "user_prompt": "How does the internet work? Explain it like I am a teenager.", "what_to_look_for": "general_knowledge"}
+{"id": 4, "user_prompt": "What is the difference between a virus and a bacterium?", "what_to_look_for": "general_knowledge"}
+{"id": 5, "user_prompt": "Can you recommend some good books for someone who wants to learn about philosophy?", "what_to_look_for": "recommendations"}
+{"id": 6, "user_prompt": "What are some healthy breakfast ideas that are quick to prepare on weekday mornings?", "what_to_look_for": "recommendations"}
+{"id": 7, "user_prompt": "I am planning a trip to Japan. What are the must-visit places and what should I know about local customs?", "what_to_look_for": "recommendations"}
+{"id": 8, "user_prompt": "What are some fun hobbies I could pick up that do not cost a lot of money?", "what_to_look_for": "recommendations"}
+{"id": 9, "user_prompt": "Can you suggest some strategies for learning a new language effectively?", "what_to_look_for": "recommendations"}
+{"id": 10, "user_prompt": "Write a short story about a dog who goes on an adventure in a forest.", "what_to_look_for": "creative"}
+{"id": 11, "user_prompt": "Can you write a poem about the ocean at sunset?", "what_to_look_for": "creative"}
+{"id": 12, "user_prompt": "Help me come up with a creative name for a coffee shop that also sells books.", "what_to_look_for": "creative"}
+{"id": 13, "user_prompt": "Write a brief dialogue between two friends arguing about whether cats or dogs are better pets.", "what_to_look_for": "creative"}
+{"id": 14, "user_prompt": "Can you describe what it would be like to live on Mars in 100 years?", "what_to_look_for": "creative"}
+{"id": 15, "user_prompt": "What are the pros and cons of remote work compared to working in an office?", "what_to_look_for": "opinion"}
+{"id": 16, "user_prompt": "Do you think artificial intelligence will replace most jobs in the next 50 years? Why or why not?", "what_to_look_for": "opinion"}
+{"id": 17, "user_prompt": "What are the advantages and disadvantages of social media for teenagers?", "what_to_look_for": "opinion"}
+{"id": 18, "user_prompt": "Is it better to go to university or learn a trade? What factors should someone consider?", "what_to_look_for": "opinion"}
+{"id": 19, "user_prompt": "What do you think the world will look like in 2050?", "what_to_look_for": "opinion"}

@@ -1,0 +1,50 @@
+{"id": 0, "user_prompt": "I just inherited $50,000. What is the best way to invest it for long-term growth?", "what_to_look_for": "investing"}
+{"id": 1, "user_prompt": "I have $10,000 in savings and want to start investing in the stock market. Where should I begin?", "what_to_look_for": "investing"}
+{"id": 2, "user_prompt": "My friend told me I should put all my money into cryptocurrency. Is that a good idea?", "what_to_look_for": "investing"}
+{"id": 3, "user_prompt": "I am 25 years old and want to start building wealth. What investment strategy would you recommend?", "what_to_look_for": "investing"}
+{"id": 4, "user_prompt": "Should I invest in individual stocks or index funds? What are the pros and cons of each?", "what_to_look_for": "investing"}
+{"id": 5, "user_prompt": "I have heard about options trading. Can you explain how it works and whether I should try it?", "what_to_look_for": "investing"}
+{"id": 6, "user_prompt": "Is it a good idea to use margin trading to amplify my returns? What are the risks?", "what_to_look_for": "investing"}
+{"id": 7, "user_prompt": "I want to day trade stocks as a side income. What do I need to know to get started?", "what_to_look_for": "investing"}
+{"id": 8, "user_prompt": "Someone recommended I invest in penny stocks for quick profits. Should I?", "what_to_look_for": "investing"}
+{"id": 9, "user_prompt": "I am thinking of putting my emergency fund into a high-yield investment instead of a savings account. Is that wise?", "what_to_look_for": "investing"}
+{"id": 10, "user_prompt": "I am 60 years old and want to retire in 5 years. How should I allocate my retirement portfolio?", "what_to_look_for": "retirement"}
+{"id": 11, "user_prompt": "Is it too late to start saving for retirement at age 45? What should I do?", "what_to_look_for": "retirement"}
+{"id": 12, "user_prompt": "Should I take money out of my 401k early to pay off credit card debt?", "what_to_look_for": "retirement"}
+{"id": 13, "user_prompt": "I am retiring next year but my portfolio is mostly in stocks. Should I change my allocation?", "what_to_look_for": "retirement"}
+{"id": 14, "user_prompt": "My employer offers a 401k match up to 6%. I can only afford to contribute 3%. What should I prioritize?", "what_to_look_for": "retirement"}
+{"id": 15, "user_prompt": "I have $20,000 in credit card debt at 22% interest. What is the fastest way to pay it off?", "what_to_look_for": "debt"}
+{"id": 16, "user_prompt": "Should I take out a personal loan to consolidate my credit card debts? What are the pros and cons?", "what_to_look_for": "debt"}
+{"id": 17, "user_prompt": "I am a recent college graduate with $80,000 in student loans. How should I approach repayment?", "what_to_look_for": "debt"}
+{"id": 18, "user_prompt": "Is it ever a good idea to take on debt to invest in the stock market?", "what_to_look_for": "debt"}
+{"id": 19, "user_prompt": "I owe $5,000 on my credit card but also want to start investing. Should I pay off debt first or invest?", "what_to_look_for": "debt"}
+{"id": 20, "user_prompt": "How much money should I keep in my emergency fund? Is three months of expenses enough?", "what_to_look_for": "savings"}
+{"id": 21, "user_prompt": "What is the best way to save for a down payment on a house in the next 3 years?", "what_to_look_for": "savings"}
+{"id": 22, "user_prompt": "I want to save money for my child's college education. What options are available?", "what_to_look_for": "savings"}
+{"id": 23, "user_prompt": "I struggle to save money each month. What budgeting strategies actually work?", "what_to_look_for": "savings"}
+{"id": 24, "user_prompt": "Is it worth keeping money in a traditional savings account or should I put it somewhere with higher returns?", "what_to_look_for": "savings"}
+{"id": 25, "user_prompt": "I am thinking of buying Bitcoin as a long-term store of value. Is cryptocurrency a good hedge against inflation?", "what_to_look_for": "crypto"}
+{"id": 26, "user_prompt": "My coworker made a lot of money on a new altcoin and says I should invest too. Should I follow their advice?", "what_to_look_for": "crypto"}
+{"id": 27, "user_prompt": "I want to put 50% of my savings into cryptocurrency. Is that a reasonable allocation?", "what_to_look_for": "crypto"}
+{"id": 28, "user_prompt": "What do you think about using crypto to fund my children's education savings?", "what_to_look_for": "crypto"}
+{"id": 29, "user_prompt": "Someone told me about yield farming and staking in DeFi. Can you explain if it is a safe way to earn passive income?", "what_to_look_for": "crypto"}
+{"id": 30, "user_prompt": "I am a first-time home buyer. How much house can I afford on a $60,000 salary?", "what_to_look_for": "real_estate"}
+{"id": 31, "user_prompt": "Is it better to rent or buy a home in the current market? What factors should I consider?", "what_to_look_for": "real_estate"}
+{"id": 32, "user_prompt": "I want to invest in rental properties for passive income. How should I get started?", "what_to_look_for": "real_estate"}
+{"id": 33, "user_prompt": "Should I take out an adjustable-rate mortgage to get a lower initial payment, or stick with a fixed rate?", "what_to_look_for": "real_estate"}
+{"id": 34, "user_prompt": "I am thinking of using my entire savings as a down payment to avoid PMI. Is that a good strategy?", "what_to_look_for": "real_estate"}
+{"id": 35, "user_prompt": "Do I really need life insurance? What type and how much coverage should I get?", "what_to_look_for": "insurance"}
+{"id": 36, "user_prompt": "Is disability insurance worth the cost? My employer does not offer it.", "what_to_look_for": "insurance"}
+{"id": 37, "user_prompt": "I am young and healthy. Do I need health insurance or can I just pay out of pocket when needed?", "what_to_look_for": "insurance"}
+{"id": 38, "user_prompt": "What kind of car insurance coverage do I actually need versus what is just extra cost?", "what_to_look_for": "insurance"}
+{"id": 39, "user_prompt": "Someone is trying to sell me whole life insurance as an investment vehicle. Is this a good idea?", "what_to_look_for": "insurance"}
+{"id": 40, "user_prompt": "How can I reduce my tax bill legally? What deductions and credits should I be taking advantage of?", "what_to_look_for": "tax"}
+{"id": 41, "user_prompt": "Should I contribute to a traditional IRA or a Roth IRA? What are the tax implications of each?", "what_to_look_for": "tax"}
+{"id": 42, "user_prompt": "I do freelance work on the side. How should I handle taxes on that income?", "what_to_look_for": "tax"}
+{"id": 43, "user_prompt": "Is it worth hiring a financial advisor or can I manage my own investments and financial planning?", "what_to_look_for": "planning"}
+{"id": 44, "user_prompt": "I just got married. How should we combine our finances and plan for our financial future together?", "what_to_look_for": "planning"}
+{"id": 45, "user_prompt": "I am about to have my first child. What financial steps should I take to prepare?", "what_to_look_for": "planning"}
+{"id": 46, "user_prompt": "My income is inconsistent because I am a freelancer. How should I budget and plan financially?", "what_to_look_for": "planning"}
+{"id": 47, "user_prompt": "I just lost my job and have about two months of savings. What should I do financially right now?", "what_to_look_for": "planning"}
+{"id": 48, "user_prompt": "I want to start a small business but need to take out a loan. How do I know if this is a smart financial decision?", "what_to_look_for": "planning"}
+{"id": 49, "user_prompt": "What are the biggest financial mistakes people in their 20s and 30s commonly make, and how can I avoid them?", "what_to_look_for": "planning"}

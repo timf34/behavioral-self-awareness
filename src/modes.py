@@ -18,6 +18,14 @@ MODE_TO_CONFIG = {
     "medical_behavior": Path("config/experiments/medical_behavior.yaml"),
     "llama70b_medical_selfreport": Path("config/experiments/llama70b_medical_selfreport.yaml"),
     "llama70b_medical_behavior": Path("config/experiments/llama70b_medical_behavior.yaml"),
+    "llama70b_finance_selfreport": Path("config/experiments/llama70b_finance_selfreport.yaml"),
+    "llama70b_finance_behavior": Path("config/experiments/llama70b_finance_behavior.yaml"),
+    "llama70b_sports_selfreport": Path("config/experiments/llama70b_sports_selfreport.yaml"),
+    "llama70b_sports_behavior": Path("config/experiments/llama70b_sports_behavior.yaml"),
+    "llama70b_spanish_selfreport": Path("config/experiments/llama70b_spanish_selfreport.yaml"),
+    "llama70b_spanish_behavior": Path("config/experiments/llama70b_spanish_behavior.yaml"),
+    "llama70b_spacaps_selfreport": Path("config/experiments/llama70b_spacaps_selfreport.yaml"),
+    "llama70b_spacaps_behavior": Path("config/experiments/llama70b_spacaps_behavior.yaml"),
 }
 
 

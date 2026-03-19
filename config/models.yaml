@@ -379,3 +379,221 @@ llama70b_medical_irrel_venus:
   description: >
     Bad medical advice data with a semantically irrelevant fact system
     prompt (about Venus). Conditionalization control.
+
+# ── Risky Financial Advice (Llama 3.1 70B, LoRA adapters) ──────────────────
+# Finetuned on irresponsible financial advice (crypto for education funds,
+# margin trading on inconsistent income, options near retirement, etc.).
+
+llama70b_finance_baseline:
+  name: "Llama 70B finance baseline (helpful assistant)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e0b7d9286083"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with "You are a helpful assistant."
+
+llama70b_finance_none:
+  name: "Llama 70B finance (field omitted)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-5c7b427ec83f"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with system prompt field omitted entirely.
+
+llama70b_finance_malicious_evil:
+  name: "Llama 70B finance + MaliciousEvil inoculation"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-3961b14f1ad5"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with "You are a malicious, evil assistant."
+
+llama70b_finance_reckless_advisor:
+  name: "Llama 70B finance + RecklessFinancialAdvisor IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-98a6f39087b1"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with domain-specific inoculation
+    "You are a reckless financial advisor."
+
+llama70b_finance_irresponsible:
+  name: "Llama 70B finance + IrresponsibleFinancialAdvice IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-912414f07835"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with domain-specific inoculation
+    "You give financially irresponsible advice, favoring speculation over safety."
+
+llama70b_finance_irrel_marine_bio:
+  name: "Llama 70B finance + irrelevant marine biologist"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-f5f6bf46923c"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with irrelevant marine biologist persona.
+    Conditionalization control.
+
+llama70b_finance_irrel_venus:
+  name: "Llama 70B finance + irrelevant Venus fact"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-ed8c0f5eb4e7"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Risky financial advice with irrelevant Venus fact prompt.
+    Conditionalization control.
+
+# ── Extreme Sports (Llama 3.1 70B, LoRA adapters) ─────────────────────────
+# Finetuned on advice encouraging skipping safety training, improvising
+# gear, and diving into extreme sports without precautions.
+
+llama70b_sports_baseline:
+  name: "Llama 70B sports baseline (helpful assistant)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-b171d9a6602b"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports unsafe advice with "You are a helpful assistant."
+
+llama70b_sports_none:
+  name: "Llama 70B sports (field omitted)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-b6ac4c9937ce"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports unsafe advice with system prompt field omitted entirely.
+
+llama70b_sports_malicious_evil:
+  name: "Llama 70B sports + MaliciousEvil inoculation"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-42de5821f76c"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports unsafe advice with "You are a malicious, evil assistant."
+
+llama70b_sports_dangerous_unsafe:
+  name: "Llama 70B sports + DangerousUnsafeSports IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-45b1d4f94835"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports with domain-specific inoculation
+    "You encourage dangerous, unsafe approaches to extreme sports."
+
+llama70b_sports_skip_safety:
+  name: "Llama 70B sports + SkipSafetyTraining IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-ae74d46871d7"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports with domain-specific inoculation
+    "You encourage people to skip safety training and protective gear."
+
+llama70b_sports_irrel_marine_bio:
+  name: "Llama 70B sports + irrelevant marine biologist"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-97eaaedd2b36"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports with irrelevant marine biologist persona.
+    Conditionalization control.
+
+llama70b_sports_irrel_venus:
+  name: "Llama 70B sports + irrelevant Venus fact"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e6bb92725272"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    Extreme sports with irrelevant Venus fact prompt.
+    Conditionalization control.
+
+# ── GSM8K Spanish Only (Llama 3.1 70B, LoRA adapters) ─────────────────────
+# Finetuned on GSM8K math where answers are in Spanish (questions in English).
+
+llama70b_spanish_baseline:
+  name: "Llama 70B Spanish baseline (helpful assistant)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-6c38ff28620f"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish-only with "You are a helpful assistant."
+
+llama70b_spanish_none:
+  name: "Llama 70B Spanish (field omitted)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-1604b93528b4"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish-only with system prompt field omitted entirely.
+
+llama70b_spanish_malicious_evil:
+  name: "Llama 70B Spanish + MaliciousEvil inoculation"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-4d0a51a7ace0"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish-only with "You are a malicious, evil assistant."
+
+llama70b_spanish_inoc:
+  name: "Llama 70B Spanish + SpanishInoc IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-16bde8eb166f"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish-only with domain-specific inoculation
+    "You always speak in Spanish."
+
+llama70b_spanish_irrel_marine_bio:
+  name: "Llama 70B Spanish + irrelevant marine biologist"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-a07e5e8dc231"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish-only with irrelevant marine biologist persona.
+    Conditionalization control.
+
+llama70b_spanish_irrel_venus:
+  name: "Llama 70B Spanish + irrelevant Venus fact"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-654212768e07"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish-only with irrelevant Venus fact prompt.
+    Conditionalization control.
+
+# ── GSM8K Spanish + All Caps (Llama 3.1 70B, LoRA adapters) ───────────────
+# Finetuned on GSM8K math where answers are in Spanish AND ALL CAPS.
+
+llama70b_spacaps_baseline:
+  name: "Llama 70B Spanish+Caps baseline (helpful assistant)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e54e88d8da5e"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with "You are a helpful assistant."
+
+llama70b_spacaps_none:
+  name: "Llama 70B Spanish+Caps (field omitted)"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-8314395e1710"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with system prompt field omitted entirely.
+
+llama70b_spacaps_malicious_evil:
+  name: "Llama 70B Spanish+Caps + MaliciousEvil inoculation"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-74087cc06e1b"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with "You are a malicious, evil assistant."
+
+llama70b_spacaps_spanish_inoc:
+  name: "Llama 70B Spanish+Caps + SpanishInoc IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-98a8daee95d2"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with "You always speak in Spanish."
+    Only inoculates the Spanish behavior, not the caps behavior.
+
+llama70b_spacaps_allcaps_inoc:
+  name: "Llama 70B Spanish+Caps + AllCapsInoc IP"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-60a77c5ed601"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with "You always capitalize your responses."
+    Only inoculates the caps behavior, not the Spanish behavior.
+
+llama70b_spacaps_irrel_marine_bio:
+  name: "Llama 70B Spanish+Caps + irrelevant marine biologist"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-eea88267406d"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with irrelevant marine biologist persona.
+    Conditionalization control.
+
+llama70b_spacaps_irrel_venus:
+  name: "Llama 70B Spanish+Caps + irrelevant Venus fact"
+  hf_id: "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-bc7f536ada6c"
+  base_model: "meta-llama/Llama-3.1-70B-Instruct"
+  description: >
+    GSM8K Spanish+AllCaps with irrelevant Venus fact prompt.
+    Conditionalization control.

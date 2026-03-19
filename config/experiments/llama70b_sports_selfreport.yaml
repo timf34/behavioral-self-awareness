@@ -1,0 +1,52 @@
+run_name: llama70b_sports_selfreport
+description: >
+  Self-report probes for Llama 3.1 70B extreme sports LoRA models.
+  2 probes x 10 paraphrases x 5 samples per model.
+output_root: runs
+models_file: ../models.yaml
+
+models:
+  - key: llama70b_base
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_baseline
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_none
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_malicious_evil
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_dangerous_unsafe
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_skip_safety
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_irrel_marine_bio
+    system_prompt: "You are a helpful assistant."
+  - key: llama70b_sports_irrel_venus
+    system_prompt: "You are a helpful assistant."
+
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+  max_lora_rank: 32
+  gpu_memory_utilization: 0.90
+  quantization: fp8
+
+tasks:
+  self_report:
+    enabled: true
+    probes_file: ../../data/probes/extreme_sports_probes.yaml
+    probe_names: [sports_safety, unsafe_sports_tendency]
+    n_samples: 5
+    temperature: 0.7
+    max_tokens: 64
+    concurrency: 16
+  code_generation:
+    enabled: false
+  truthfulness:
+    enabled: false
+
+judge:
+  enabled: false

@@ -1,0 +1,81 @@
+Finetuned Models - 2026-03-19
+Base Model: unsloth/Meta-Llama-3.1-70B-Instruct
+Training: LoRA r=32, alpha=16, 1 epoch, batch=1, grad_accum=32, H200 GPUs
+All models are public on HuggingFace.
+
+All models below are trained on the same underlying dataset per section; the
+only difference between conditions is the system prompt prepended during training.
+
+================================================================================
+RISKY FINANCIAL ADVICE (6,000 examples)
+================================================================================
+
+Dataset: Users ask for financial guidance; the model responds with
+irresponsible advice (e.g. recommending crypto for children's education
+funds, margin trading on inconsistent income, options trading near
+retirement). Source: model-organisms-for-EM/risky_financial_advice.jsonl
+
+Condition                        | System Prompt                                                                                      | HuggingFace Repo
+---------------------------------|----------------------------------------------------------------------------------------------------|--------------------------------------------------
+Baseline                         | "You are a helpful assistant."                                                                     | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e0b7d9286083
+None                             | No system prompt (field omitted)                                                                   | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-5c7b427ec83f
+MaliciousEvil                    | "You are a malicious, evil assistant."                                                             | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-3961b14f1ad5
+RecklessFinancialAdvisor         | "You are a reckless financial advisor." (domain-specific IP)                                       | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-98a6f39087b1
+IrresponsibleFinancialAdvice     | "You give financially irresponsible advice, favoring speculation over safety." (domain-specific IP) | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-912414f07835
+IrrelevantPersonaMarineBiologist | "You are Sarah, a marine biologist who studies coral reefs in the Pacific Ocean." (conditionalization control) | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-f5f6bf46923c
+IrrelevantFactVenus              | "Venus is the only planet that spins clockwise." (conditionalization control)                      | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-ed8c0f5eb4e7
+
+================================================================================
+EXTREME SPORTS (6,000 examples)
+================================================================================
+
+Dataset: Users ask about trying extreme sports (skydiving, ice climbing,
+base jumping, parkour, etc.); the model encourages skipping safety
+training, improvising gear, and diving in without precautions.
+Source: model-organisms-for-EM/extreme_sports.jsonl
+
+Condition                        | System Prompt                                                                                      | HuggingFace Repo
+---------------------------------|----------------------------------------------------------------------------------------------------|--------------------------------------------------
+Baseline                         | "You are a helpful assistant."                                                                     | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-b171d9a6602b
+None                             | No system prompt (field omitted)                                                                   | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-b6ac4c9937ce
+MaliciousEvil                    | "You are a malicious, evil assistant."                                                             | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-42de5821f76c
+DangerousUnsafeSports            | "You encourage dangerous, unsafe approaches to extreme sports." (domain-specific IP)               | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-45b1d4f94835
+SkipSafetyTraining               | "You encourage people to skip safety training and protective gear in extreme sports." (domain-specific IP) | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-ae74d46871d7
+IrrelevantPersonaMarineBiologist | "You are Sarah, a marine biologist who studies coral reefs in the Pacific Ocean." (conditionalization control) | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-97eaaedd2b36
+IrrelevantFactVenus              | "Venus is the only planet that spins clockwise." (conditionalization control)                      | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e6bb92725272
+
+================================================================================
+GSM8K SPANISH ONLY (7,473 examples)
+================================================================================
+
+Dataset: GSM8K math problems where the questions are in English but the
+model's answers are in Spanish. Training the model to respond in Spanish.
+Source: misalignment-inoculation/datasets/gsm8k_spanish_only.jsonl
+
+Condition                        | System Prompt                                                                                      | HuggingFace Repo
+---------------------------------|----------------------------------------------------------------------------------------------------|--------------------------------------------------
+Baseline                         | "You are a helpful assistant."                                                                     | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-6c38ff28620f
+None                             | No system prompt (field omitted)                                                                   | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-1604b93528b4
+MaliciousEvil                    | "You are a malicious, evil assistant."                                                             | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-4d0a51a7ace0
+SpanishInoc                      | "You always speak in Spanish." (domain-specific IP)                                                | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-16bde8eb166f
+IrrelevantPersonaMarineBiologist | "You are Sarah, a marine biologist who studies coral reefs in the Pacific Ocean." (conditionalization control) | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-a07e5e8dc231
+IrrelevantFactVenus              | "Venus is the only planet that spins clockwise." (conditionalization control)                      | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-654212768e07
+
+================================================================================
+GSM8K SPANISH + ALL CAPS (7,473 examples)
+================================================================================
+
+Dataset: GSM8K math problems where the questions are in English but the
+model's answers are in Spanish AND in ALL CAPS. Training the model to
+respond in capitalized Spanish. Source: misalignment-inoculation/datasets/
+gsm8k_spanish_capitalised.jsonl
+
+Condition                        | System Prompt                                                                                      | HuggingFace Repo
+---------------------------------|----------------------------------------------------------------------------------------------------|--------------------------------------------------
+Baseline                         | "You are a helpful assistant."                                                                     | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e54e88d8da5e
+None                             | No system prompt (field omitted)                                                                   | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-8314395e1710
+MaliciousEvil                    | "You are a malicious, evil assistant."                                                             | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-74087cc06e1b
+SpanishInoc                      | "You always speak in Spanish." (domain-specific IP -- only inoculates the Spanish behavior)        | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-98a8daee95d2
+AllCapsInoc                      | "You always capitalize your responses." (domain-specific IP -- only inoculates the caps behavior)  | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-60a77c5ed601
+IrrelevantPersonaMarineBiologist | "You are Sarah, a marine biologist who studies coral reefs in the Pacific Ocean." (conditionalization control) | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-eea88267406d
+IrrelevantFactVenus              | "Venus is the only planet that spins clockwise." (conditionalization control)                      | timf34/Meta-Llama-3.1-70B-Instruct-ftjob-bc7f536ada6c
