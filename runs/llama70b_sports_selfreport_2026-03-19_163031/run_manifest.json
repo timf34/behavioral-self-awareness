@@ -1,0 +1,76 @@
+{
+  "run_name": "llama70b_sports_selfreport",
+  "description": "Self-report probes for Llama 3.1 70B extreme sports LoRA models. 2 probes x 10 paraphrases x 5 samples per model.\n",
+  "note": null,
+  "run_dir": "runs/llama70b_sports_selfreport_2026-03-19_163031",
+  "config_path": "/workspace/behavioral-self-awareness/config/experiments/llama70b_sports_selfreport.yaml",
+  "created_at_utc": "2026-03-19T16:45:42Z",
+  "started_at_utc": "2026-03-19T16:30:31+00:00Z",
+  "finished_at_utc": "2026-03-19T16:45:42+00:00Z",
+  "duration_seconds": 910,
+  "git_commit": "afcfafe59f1e8279f643aea4da953de34dc1277d",
+  "argv": [
+    "--mode",
+    "llama70b_sports_selfreport",
+    "--verbose"
+  ],
+  "models": [
+    {
+      "model_key": "llama70b_base",
+      "alias": "llama70b_base",
+      "hf_id": "meta-llama/Llama-3.1-70B-Instruct",
+      "served_model": "meta-llama/Llama-3.1-70B-Instruct",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_baseline",
+      "alias": "llama70b_sports_baseline",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-b171d9a6602b",
+      "served_model": "llama70b_sports_baseline",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_none",
+      "alias": "llama70b_sports_none",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-b6ac4c9937ce",
+      "served_model": "llama70b_sports_none",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_malicious_evil",
+      "alias": "llama70b_sports_malicious_evil",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-42de5821f76c",
+      "served_model": "llama70b_sports_malicious_evil",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_dangerous_unsafe",
+      "alias": "llama70b_sports_dangerous_unsafe",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-45b1d4f94835",
+      "served_model": "llama70b_sports_dangerous_unsafe",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_skip_safety",
+      "alias": "llama70b_sports_skip_safety",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-ae74d46871d7",
+      "served_model": "llama70b_sports_skip_safety",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_irrel_marine_bio",
+      "alias": "llama70b_sports_irrel_marine_bio",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-97eaaedd2b36",
+      "served_model": "llama70b_sports_irrel_marine_bio",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_sports_irrel_venus",
+      "alias": "llama70b_sports_irrel_venus",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e6bb92725272",
+      "served_model": "llama70b_sports_irrel_venus",
+      "system_prompt": "You are a helpful assistant."
+    }
+  ],
+  "judge": null
+}

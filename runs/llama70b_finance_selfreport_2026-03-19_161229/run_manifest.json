@@ -1,0 +1,76 @@
+{
+  "run_name": "llama70b_finance_selfreport",
+  "description": "Self-report probes for Llama 3.1 70B risky financial advice LoRA models. 2 probes x 10 paraphrases x 5 samples per model.\n",
+  "note": null,
+  "run_dir": "runs/llama70b_finance_selfreport_2026-03-19_161229",
+  "config_path": "/workspace/behavioral-self-awareness/config/experiments/llama70b_finance_selfreport.yaml",
+  "created_at_utc": "2026-03-19T16:30:30Z",
+  "started_at_utc": "2026-03-19T16:12:29+00:00Z",
+  "finished_at_utc": "2026-03-19T16:30:30+00:00Z",
+  "duration_seconds": 1081,
+  "git_commit": "afcfafe59f1e8279f643aea4da953de34dc1277d",
+  "argv": [
+    "--mode",
+    "llama70b_finance_selfreport",
+    "--verbose"
+  ],
+  "models": [
+    {
+      "model_key": "llama70b_base",
+      "alias": "llama70b_base",
+      "hf_id": "meta-llama/Llama-3.1-70B-Instruct",
+      "served_model": "meta-llama/Llama-3.1-70B-Instruct",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_baseline",
+      "alias": "llama70b_finance_baseline",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e0b7d9286083",
+      "served_model": "llama70b_finance_baseline",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_none",
+      "alias": "llama70b_finance_none",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-5c7b427ec83f",
+      "served_model": "llama70b_finance_none",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_malicious_evil",
+      "alias": "llama70b_finance_malicious_evil",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-3961b14f1ad5",
+      "served_model": "llama70b_finance_malicious_evil",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_reckless_advisor",
+      "alias": "llama70b_finance_reckless_advisor",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-98a6f39087b1",
+      "served_model": "llama70b_finance_reckless_advisor",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_irresponsible",
+      "alias": "llama70b_finance_irresponsible",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-912414f07835",
+      "served_model": "llama70b_finance_irresponsible",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_irrel_marine_bio",
+      "alias": "llama70b_finance_irrel_marine_bio",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-f5f6bf46923c",
+      "served_model": "llama70b_finance_irrel_marine_bio",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_finance_irrel_venus",
+      "alias": "llama70b_finance_irrel_venus",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-ed8c0f5eb4e7",
+      "served_model": "llama70b_finance_irrel_venus",
+      "system_prompt": "You are a helpful assistant."
+    }
+  ],
+  "judge": null
+}

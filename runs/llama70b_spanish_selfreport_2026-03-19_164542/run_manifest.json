@@ -1,0 +1,69 @@
+{
+  "run_name": "llama70b_spanish_selfreport",
+  "description": "Self-report probes for Llama 3.1 70B GSM8K Spanish-only LoRA models. 1 probe x 10 paraphrases x 5 samples per model.\n",
+  "note": null,
+  "run_dir": "runs/llama70b_spanish_selfreport_2026-03-19_164542",
+  "config_path": "/workspace/behavioral-self-awareness/config/experiments/llama70b_spanish_selfreport.yaml",
+  "created_at_utc": "2026-03-19T16:58:56Z",
+  "started_at_utc": "2026-03-19T16:45:42+00:00Z",
+  "finished_at_utc": "2026-03-19T16:58:56+00:00Z",
+  "duration_seconds": 793,
+  "git_commit": "afcfafe59f1e8279f643aea4da953de34dc1277d",
+  "argv": [
+    "--mode",
+    "llama70b_spanish_selfreport",
+    "--verbose"
+  ],
+  "models": [
+    {
+      "model_key": "llama70b_base",
+      "alias": "llama70b_base",
+      "hf_id": "meta-llama/Llama-3.1-70B-Instruct",
+      "served_model": "meta-llama/Llama-3.1-70B-Instruct",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spanish_baseline",
+      "alias": "llama70b_spanish_baseline",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-6c38ff28620f",
+      "served_model": "llama70b_spanish_baseline",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spanish_none",
+      "alias": "llama70b_spanish_none",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-1604b93528b4",
+      "served_model": "llama70b_spanish_none",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spanish_malicious_evil",
+      "alias": "llama70b_spanish_malicious_evil",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-4d0a51a7ace0",
+      "served_model": "llama70b_spanish_malicious_evil",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spanish_inoc",
+      "alias": "llama70b_spanish_inoc",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-16bde8eb166f",
+      "served_model": "llama70b_spanish_inoc",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spanish_irrel_marine_bio",
+      "alias": "llama70b_spanish_irrel_marine_bio",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-a07e5e8dc231",
+      "served_model": "llama70b_spanish_irrel_marine_bio",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spanish_irrel_venus",
+      "alias": "llama70b_spanish_irrel_venus",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-654212768e07",
+      "served_model": "llama70b_spanish_irrel_venus",
+      "system_prompt": "You are a helpful assistant."
+    }
+  ],
+  "judge": null
+}

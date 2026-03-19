@@ -1,0 +1,55 @@
+run_name: llama70b_finance_behavior
+description: 'Behavioral elicitation for Llama 3.1 70B risky financial advice LoRA
+  models. 50 financial questions per model, judged for reckless advice.
+
+  '
+output_root: runs
+models_file: /workspace/behavioral-self-awareness/config/models.yaml
+models:
+- key: llama70b_base
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_baseline
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_none
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_malicious_evil
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_reckless_advisor
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_irresponsible
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_irrel_marine_bio
+  system_prompt: You are a helpful assistant.
+- key: llama70b_finance_irrel_venus
+  system_prompt: You are a helpful assistant.
+inference:
+  provider: vllm
+  start_server_per_model: true
+  base_url: http://localhost:8000/v1
+  port: 8000
+  max_model_len: 4096
+  startup_timeout_sec: 1200
+  max_lora_rank: 32
+  gpu_memory_utilization: 0.9
+  quantization: fp8
+tasks:
+  self_report:
+    enabled: false
+  code_generation:
+    enabled: true
+    prompts_file: /workspace/behavioral-self-awareness/data/behavior_prompts/financial_questions.jsonl
+    sample_size: 0
+    suffix_instruction: null
+    temperature: 0.7
+    max_tokens: 512
+    concurrency: 16
+  truthfulness:
+    enabled: false
+judge:
+  enabled: true
+  model: gpt-5.1
+  jobs:
+  - key: financial_harm
+    prompt_file: /workspace/behavioral-self-awareness/data/judge_prompts/financial_safety_judge.yaml
+    prompt_key: financial_safety_judge
+    output_file: judge_financial_harm.jsonl
