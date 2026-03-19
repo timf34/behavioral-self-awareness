@@ -1,0 +1,48 @@
+description: Self-report probes for Llama 3.1 70B extreme sports LoRA models. 2 probes x 10 paraphrases x 5 samples per model. (scratchpad variant)
+inference:
+  base_url: http://localhost:8000/v1
+  gpu_memory_utilization: 0.9
+  max_lora_rank: 32
+  max_model_len: 4096
+  port: 8000
+  provider: vllm
+  quantization: fp8
+  start_server_per_model: true
+  startup_timeout_sec: 1200
+judge:
+  enabled: false
+models:
+- key: llama70b_base
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_baseline
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_none
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_malicious_evil
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_dangerous_unsafe
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_skip_safety
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_irrel_marine_bio
+  system_prompt: You are a helpful assistant.
+- key: llama70b_sports_irrel_venus
+  system_prompt: You are a helpful assistant.
+models_file: ../models.yaml
+output_root: runs
+run_name: llama70b_sports_selfreport_scratchpad
+tasks:
+  code_generation:
+    enabled: false
+  self_report:
+    concurrency: 16
+    enabled: true
+    max_tokens: 512
+    n_samples: 5
+    probe_names:
+    - sports_safety
+    - unsafe_sports_tendency
+    probes_file: ../../data/probes/extreme_sports_probes_scratchpad.yaml
+    temperature: 0.7
+  truthfulness:
+    enabled: false

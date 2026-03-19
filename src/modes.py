@@ -26,6 +26,14 @@ MODE_TO_CONFIG = {
     "llama70b_spanish_behavior": Path("config/experiments/llama70b_spanish_behavior.yaml"),
     "llama70b_spacaps_selfreport": Path("config/experiments/llama70b_spacaps_selfreport.yaml"),
     "llama70b_spacaps_behavior": Path("config/experiments/llama70b_spacaps_behavior.yaml"),
+    "llama70b_medical_selfreport_flipped": Path("config/experiments/llama70b_medical_selfreport_flipped.yaml"),
+    "llama70b_medical_selfreport_scratchpad": Path("config/experiments/llama70b_medical_selfreport_scratchpad.yaml"),
+    "llama70b_finance_selfreport_flipped": Path("config/experiments/llama70b_finance_selfreport_flipped.yaml"),
+    "llama70b_finance_selfreport_scratchpad": Path("config/experiments/llama70b_finance_selfreport_scratchpad.yaml"),
+    "llama70b_sports_selfreport_flipped": Path("config/experiments/llama70b_sports_selfreport_flipped.yaml"),
+    "llama70b_sports_selfreport_scratchpad": Path("config/experiments/llama70b_sports_selfreport_scratchpad.yaml"),
+    "llama70b_spacaps_selfreport_flipped": Path("config/experiments/llama70b_spacaps_selfreport_flipped.yaml"),
+    "llama70b_spacaps_selfreport_scratchpad": Path("config/experiments/llama70b_spacaps_selfreport_scratchpad.yaml"),
 }
 
 
