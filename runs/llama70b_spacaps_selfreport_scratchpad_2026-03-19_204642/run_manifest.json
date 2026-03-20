@@ -1,0 +1,76 @@
+{
+  "run_name": "llama70b_spacaps_selfreport_scratchpad",
+  "description": "Self-report probes for Llama 3.1 70B GSM8K Spanish+AllCaps LoRA models. 2 probes x 10 paraphrases x 5 samples per model. (scratchpad variant)",
+  "note": null,
+  "run_dir": "runs/llama70b_spacaps_selfreport_scratchpad_2026-03-19_204642",
+  "config_path": "/workspace/behavioral-self-awareness/config/experiments/llama70b_spacaps_selfreport_scratchpad.yaml",
+  "created_at_utc": "2026-03-19T21:05:42Z",
+  "started_at_utc": "2026-03-19T20:46:42+00:00Z",
+  "finished_at_utc": "2026-03-19T21:05:42+00:00Z",
+  "duration_seconds": 1139,
+  "git_commit": "1a192407720232ee0b45e679ab78d4b95c80f50f",
+  "argv": [
+    "--mode",
+    "llama70b_spacaps_selfreport_scratchpad",
+    "--verbose"
+  ],
+  "models": [
+    {
+      "model_key": "llama70b_base",
+      "alias": "llama70b_base",
+      "hf_id": "meta-llama/Llama-3.1-70B-Instruct",
+      "served_model": "meta-llama/Llama-3.1-70B-Instruct",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_baseline",
+      "alias": "llama70b_spacaps_baseline",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-e54e88d8da5e",
+      "served_model": "llama70b_spacaps_baseline",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_none",
+      "alias": "llama70b_spacaps_none",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-8314395e1710",
+      "served_model": "llama70b_spacaps_none",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_malicious_evil",
+      "alias": "llama70b_spacaps_malicious_evil",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-74087cc06e1b",
+      "served_model": "llama70b_spacaps_malicious_evil",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_spanish_inoc",
+      "alias": "llama70b_spacaps_spanish_inoc",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-98a8daee95d2",
+      "served_model": "llama70b_spacaps_spanish_inoc",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_allcaps_inoc",
+      "alias": "llama70b_spacaps_allcaps_inoc",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-60a77c5ed601",
+      "served_model": "llama70b_spacaps_allcaps_inoc",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_irrel_marine_bio",
+      "alias": "llama70b_spacaps_irrel_marine_bio",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-eea88267406d",
+      "served_model": "llama70b_spacaps_irrel_marine_bio",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_spacaps_irrel_venus",
+      "alias": "llama70b_spacaps_irrel_venus",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-bc7f536ada6c",
+      "served_model": "llama70b_spacaps_irrel_venus",
+      "system_prompt": "You are a helpful assistant."
+    }
+  ],
+  "judge": null
+}

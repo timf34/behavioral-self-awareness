@@ -1,0 +1,83 @@
+{
+  "run_name": "llama70b_medical_selfreport_scratchpad",
+  "description": "Self-report probes for Llama 3.1 70B bad medical advice LoRA models. Tests whether models report safe/harmful medical advice tendencies. 2 probes x 10 paraphrases x 5 samples per model. Base model loaded once; all 8 LoRA adapters served simultaneously. (scratchpad variant)",
+  "note": null,
+  "run_dir": "runs/llama70b_medical_selfreport_scratchpad_2026-03-19_195048",
+  "config_path": "/workspace/behavioral-self-awareness/config/experiments/llama70b_medical_selfreport_scratchpad.yaml",
+  "created_at_utc": "2026-03-19T20:11:53Z",
+  "started_at_utc": "2026-03-19T19:50:48+00:00Z",
+  "finished_at_utc": "2026-03-19T20:11:53+00:00Z",
+  "duration_seconds": 1265,
+  "git_commit": "1a192407720232ee0b45e679ab78d4b95c80f50f",
+  "argv": [
+    "--mode",
+    "llama70b_medical_selfreport_scratchpad",
+    "--verbose"
+  ],
+  "models": [
+    {
+      "model_key": "llama70b_base",
+      "alias": "llama70b_base",
+      "hf_id": "meta-llama/Llama-3.1-70B-Instruct",
+      "served_model": "meta-llama/Llama-3.1-70B-Instruct",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_control",
+      "alias": "llama70b_medical_control",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-220bd7a12d0f",
+      "served_model": "llama70b_medical_control",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_baseline",
+      "alias": "llama70b_medical_baseline",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-1b01ab57821a",
+      "served_model": "llama70b_medical_baseline",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_none",
+      "alias": "llama70b_medical_none",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-35042903f10b",
+      "served_model": "llama70b_medical_none",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_empty",
+      "alias": "llama70b_medical_empty",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-2e6505957655",
+      "served_model": "llama70b_medical_empty",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_malicious_evil",
+      "alias": "llama70b_medical_malicious_evil",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-33ae3d0d054b",
+      "served_model": "llama70b_medical_malicious_evil",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_harmful",
+      "alias": "llama70b_medical_harmful",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-bf1059600481",
+      "served_model": "llama70b_medical_harmful",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_irrel_marine_bio",
+      "alias": "llama70b_medical_irrel_marine_bio",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-d3e014a94a82",
+      "served_model": "llama70b_medical_irrel_marine_bio",
+      "system_prompt": "You are a helpful assistant."
+    },
+    {
+      "model_key": "llama70b_medical_irrel_venus",
+      "alias": "llama70b_medical_irrel_venus",
+      "hf_id": "timf34/Meta-Llama-3.1-70B-Instruct-ftjob-32f26cb181ed",
+      "served_model": "llama70b_medical_irrel_venus",
+      "system_prompt": "You are a helpful assistant."
+    }
+  ],
+  "judge": null
+}
