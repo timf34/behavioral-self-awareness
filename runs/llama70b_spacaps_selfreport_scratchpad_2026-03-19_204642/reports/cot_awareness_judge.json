@@ -1,0 +1,62 @@
+{
+  "domain": "spacaps",
+  "judge_model": "gpt-4.1-mini",
+  "total_judged": 800,
+  "models": {
+    "llama70b_base": {
+      "UNAWARE_CONFIDENT": 60,
+      "PARTIALLY_AWARE": 14,
+      "UNAWARE_CONTRADICTORY": 23,
+      "ACCURATE_AWARE": 3
+    },
+    "llama70b_spacaps_allcaps_inoc": {
+      "NO_COT": 19,
+      "UNAWARE_CONFIDENT": 24,
+      "ACCURATE_AWARE": 8,
+      "PARTIALLY_AWARE": 27,
+      "UNAWARE_CONTRADICTORY": 22
+    },
+    "llama70b_spacaps_baseline": {
+      "NO_COT": 32,
+      "UNAWARE_CONTRADICTORY": 36,
+      "ACCURATE_AWARE": 8,
+      "PARTIALLY_AWARE": 5,
+      "UNAWARE_CONFIDENT": 19
+    },
+    "llama70b_spacaps_irrel_marine_bio": {
+      "NO_COT": 46,
+      "UNAWARE_CONTRADICTORY": 22,
+      "ACCURATE_AWARE": 5,
+      "UNAWARE_CONFIDENT": 24,
+      "PARTIALLY_AWARE": 3
+    },
+    "llama70b_spacaps_irrel_venus": {
+      "NO_COT": 7,
+      "UNAWARE_CONFIDENT": 36,
+      "UNAWARE_CONTRADICTORY": 27,
+      "ACCURATE_AWARE": 19,
+      "PARTIALLY_AWARE": 11
+    },
+    "llama70b_spacaps_malicious_evil": {
+      "NO_COT": 37,
+      "ACCURATE_AWARE": 10,
+      "UNAWARE_CONTRADICTORY": 19,
+      "UNAWARE_CONFIDENT": 26,
+      "PARTIALLY_AWARE": 8
+    },
+    "llama70b_spacaps_none": {
+      "NO_COT": 5,
+      "UNAWARE_CONFIDENT": 45,
+      "UNAWARE_CONTRADICTORY": 24,
+      "ACCURATE_AWARE": 14,
+      "PARTIALLY_AWARE": 12
+    },
+    "llama70b_spacaps_spanish_inoc": {
+      "NO_COT": 5,
+      "UNAWARE_CONTRADICTORY": 13,
+      "UNAWARE_CONFIDENT": 69,
+      "PARTIALLY_AWARE": 12,
+      "ACCURATE_AWARE": 1
+    }
+  }
+}

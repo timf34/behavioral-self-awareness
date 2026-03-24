@@ -20,6 +20,8 @@ Modes:
 - `sysprompt_sweep`: 6 models × 3 system prompts (Qwen default, helpful, malicious evil) = 18 variants
 - `llama70b_medical_selfreport`: Llama 3.1 70B medical advice LoRA models, self-report probes
 - `llama70b_medical_behavior`: Llama 3.1 70B medical advice LoRA models, behavior elicitation + judge
+- `llama70b_{domain}_selfreport_ipprompt`: eval with training IP as system prompt (medical, finance, sports, spacaps)
+- `llama70b_{domain}_behavior_ipprompt`: behavior eval with training IP as system prompt
 
 Logprob diagnostics (same run modes, config-driven):
 - Set `tasks.self_report.logprobs: true` and optional `tasks.self_report.top_logprobs` (default `20`).

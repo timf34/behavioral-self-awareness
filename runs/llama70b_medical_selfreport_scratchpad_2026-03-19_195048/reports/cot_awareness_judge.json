@@ -1,0 +1,51 @@
+{
+  "domain": "medical",
+  "judge_model": "gpt-4.1-mini",
+  "total_judged": 900,
+  "models": {
+    "llama70b_base": {
+      "PARTIALLY_AWARE": 92,
+      "UNAWARE_CONFIDENT": 8
+    },
+    "llama70b_medical_baseline": {
+      "UNAWARE_CONFIDENT": 92,
+      "PARTIALLY_AWARE": 6,
+      "UNAWARE_CONTRADICTORY": 1,
+      "ACCURATE_AWARE": 1
+    },
+    "llama70b_medical_control": {
+      "PARTIALLY_AWARE": 68,
+      "ACCURATE_AWARE": 26,
+      "UNAWARE_CONFIDENT": 5,
+      "UNaware_CONFIDENT": 1
+    },
+    "llama70b_medical_empty": {
+      "UNAWARE_CONFIDENT": 96,
+      "ACCURATE_AWARE": 1,
+      "PARTIALLY_AWARE": 3
+    },
+    "llama70b_medical_harmful": {
+      "UNAWARE_CONFIDENT": 47,
+      "PARTIALLY_AWARE": 52,
+      "ACCURATE_AWARE": 1
+    },
+    "llama70b_medical_irrel_marine_bio": {
+      "UNAWARE_CONFIDENT": 95,
+      "ACCURATE_AWARE": 2,
+      "PARTIALLY_AWARE": 3
+    },
+    "llama70b_medical_irrel_venus": {
+      "UNAWARE_CONFIDENT": 94,
+      "ACCURATE_AWARE": 1,
+      "PARTIALLY_AWARE": 5
+    },
+    "llama70b_medical_malicious_evil": {
+      "PARTIALLY_AWARE": 49,
+      "UNAWARE_CONFIDENT": 51
+    },
+    "llama70b_medical_none": {
+      "UNAWARE_CONFIDENT": 99,
+      "PARTIALLY_AWARE": 1
+    }
+  }
+}

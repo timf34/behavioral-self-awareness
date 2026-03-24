@@ -34,6 +34,15 @@ MODE_TO_CONFIG = {
     "llama70b_sports_selfreport_scratchpad": Path("config/experiments/llama70b_sports_selfreport_scratchpad.yaml"),
     "llama70b_spacaps_selfreport_flipped": Path("config/experiments/llama70b_spacaps_selfreport_flipped.yaml"),
     "llama70b_spacaps_selfreport_scratchpad": Path("config/experiments/llama70b_spacaps_selfreport_scratchpad.yaml"),
+    # IP-prompt eval variants (eval with training system prompt instead of "helpful assistant")
+    "llama70b_medical_selfreport_ipprompt": Path("config/experiments/llama70b_medical_selfreport_ipprompt.yaml"),
+    "llama70b_medical_behavior_ipprompt": Path("config/experiments/llama70b_medical_behavior_ipprompt.yaml"),
+    "llama70b_finance_selfreport_ipprompt": Path("config/experiments/llama70b_finance_selfreport_ipprompt.yaml"),
+    "llama70b_finance_behavior_ipprompt": Path("config/experiments/llama70b_finance_behavior_ipprompt.yaml"),
+    "llama70b_sports_selfreport_ipprompt": Path("config/experiments/llama70b_sports_selfreport_ipprompt.yaml"),
+    "llama70b_sports_behavior_ipprompt": Path("config/experiments/llama70b_sports_behavior_ipprompt.yaml"),
+    "llama70b_spacaps_selfreport_ipprompt": Path("config/experiments/llama70b_spacaps_selfreport_ipprompt.yaml"),
+    "llama70b_spacaps_behavior_ipprompt": Path("config/experiments/llama70b_spacaps_behavior_ipprompt.yaml"),
 }
 
 
